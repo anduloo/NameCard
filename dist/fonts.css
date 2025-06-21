@@ -1,0 +1,60 @@
+@font-face {
+  font-family: 'ZhanKuQingKeHuangYouTi';
+  src: url('/fonts/ZhanKuQingKeHuangYouTi.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'OPPO Sans';
+  src: url('/fonts/OPPO Sans 4.0.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'MiSans VF';
+  src: url('/fonts/MiSans VF.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Fangzhengfangsong';
+  src: url('/fonts/Fangzhengfangsong.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'JiangXiZhuoKai';
+  src: url('/fonts/JiangXiZhuoKai.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Alibaba-PuHuiTi-Regular';
+  src: url('/fonts/Alibaba-PuHuiTi-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'LXGWNeoXiHeiPlus';
+  src: url('/fonts/LXGWNeoXiHeiPlus.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'kuaikanshijie';
+  src: url('/fonts/kuaikanshijie.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'huxiaobozhenshuai';
+  src: url('/fonts/huxiaobozhenshuai.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SmileySans-Oblique';
+  src: url('/fonts/SmileySans-Oblique.ttf.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+} 
