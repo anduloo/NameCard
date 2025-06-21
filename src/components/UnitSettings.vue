@@ -199,10 +199,10 @@ function toggleBorder(side) {
 }
 
 function toggleRangeStyle(prop, value) {
-  if (store.config.unit[prop] === value) {
-    store.config.unit[prop] = 'normal'
+  if (store.config.unit[`range${prop.charAt(0).toUpperCase()+prop.slice(1)}`] === value) {
+    store.config.unit[`range${prop.charAt(0).toUpperCase()+prop.slice(1)}`] = (prop === 'fontWeight' ? 'normal' : (prop === 'fontStyle' ? 'normal' : 'none'))
   } else {
-    store.config.unit[prop] = value
+    store.config.unit[`range${prop.charAt(0).toUpperCase()+prop.slice(1)}`] = value
   }
 }
 

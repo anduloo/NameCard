@@ -48,7 +48,11 @@ export const useStyleStore = defineStore('style', () => {
       offsetX: 0,
       offsetY: 0,
       rangeStart: 0,
-      rangeEnd: 0
+      rangeEnd: 0,
+      rangeFontSize: 24,
+      rangeFontWeight: 'normal',
+      rangeFontStyle: 'normal',
+      rangeTextDecoration: 'none'
     },
     name: {
       backgroundType: 'color',
@@ -79,7 +83,11 @@ export const useStyleStore = defineStore('style', () => {
       offsetX: 0,
       offsetY: 0,
       rangeStart: 0,
-      rangeEnd: 0
+      rangeEnd: 0,
+      rangeFontSize: 32,
+      rangeFontWeight: 'normal',
+      rangeFontStyle: 'normal',
+      rangeTextDecoration: 'none'
     },
     unit: {
       backgroundType: 'color',
@@ -110,7 +118,11 @@ export const useStyleStore = defineStore('style', () => {
       offsetX: 0,
       offsetY: 0,
       rangeStart: 0,
-      rangeEnd: 0
+      rangeEnd: 0,
+      rangeFontSize: 20,
+      rangeFontWeight: 'normal',
+      rangeFontStyle: 'normal',
+      rangeTextDecoration: 'none'
     },
     direction: 'horizontal', // 'horizontal' or 'vertical'
     columnOrder: 'ltr', // 'ltr' or 'rtl' for vertical

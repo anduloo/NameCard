@@ -47,15 +47,22 @@
           </g>
           
           <!-- Text (Not Skewed) -->
-          <text :x="layout.text.x" :y="layout.text.y" :font-family="layout.text.fontFamily" :font-size="layout.text.fontSize" :font-weight="layout.text.fontWeight" :font-style="layout.text.fontStyle" :text-decoration="layout.text.textDecoration" :fill="layout.text.textColor" :stroke="layout.text.stroke" :stroke-width="layout.text.strokeWidth" :filter="layout.text.filter" :text-anchor="layout.text.textAnchor" :dominant-baseline="layout.text.dominantBaseline" :writing-mode="layout.text.writingMode === 'vertical-rl' ? 'upright' : ''">
+          <text :x="layout.text.x" :y="layout.text.y" :font-family="layout.text.fontFamily" :font-size="layout.text.fontSize" :font-weight="layout.text.fontWeight" :font-style="layout.text.fontStyle" :text-decoration="layout.text.textDecoration" :fill="layout.text.textColor" :stroke="layout.text.stroke" :stroke-width="layout.text.strokeWidth" :filter="layout.text.filter" :text-anchor="layout.text.textAnchor" :dominant-baseline="layout.text.dominantBaseline" :writing-mode="layout.text.writingMode">
             <template v-if="layout.text.ranges && layout.text.ranges.length > 0">
               <tspan v-for="(span, i) in layout.text.ranges" :key="i" :font-size="span.fontSize" :font-weight="span.fontWeight" :font-style="span.fontStyle" :text-decoration="span.textDecoration" :dy="span.dy || 0">{{ span.text }}</tspan>
             </template>
             <template v-else>
-              <!-- 处理换行符 -->
-              <template v-for="(line, lineIndex) in getMultilineText(layout.text.content)" :key="lineIndex">
-                <tspan v-if="lineIndex > 0" :x="layout.text.x" :dy="layout.text.lineHeight">{{ line }}</tspan>
-                <tspan v-else :dy="0">{{ line }}</tspan>
+              <!-- Multi-line text handling -->
+              <template v-if="direction === 'horizontal'">
+                <template v-for="(line, lineIndex) in getMultilineText(layout.text.content)" :key="lineIndex">
+                  <tspan v-if="lineIndex > 0" :x="layout.text.x" :dy="layout.text.lineHeight">{{ line }}</tspan>
+                  <tspan v-else :dy="0">{{ line }}</tspan>
+                </template>
+              </template>
+              <template v-else> <!-- Vertical layout -->
+                <template v-for="(line, lineIndex) in getMultilineText(layout.text.content)" :key="lineIndex">
+                  <tspan :x="layout.text.x + ((getMultilineText(layout.text.content).length - 1) / 2 - lineIndex) * layout.text.lineHeight" :y="layout.text.y">{{ line }}</tspan>
+                </template>
               </template>
             </template>
           </text>
@@ -105,7 +112,6 @@ import { useStyleStore } from '@/stores/styleStore'
 import { gradients } from '@/config/gradients'
 import { patterns } from '@/config/patterns'
 import { customFonts } from '@/config/fonts'
-import html2canvas from 'html2canvas'
 
 const props = defineProps({
   columns: { type: Array, required: true },
@@ -122,13 +128,13 @@ const colCount = computed(() => props.columns.length)
 // --- Layout Constants ---
 const PADDING = 0 
 const ROW_GAP = 0
-const VERTICAL_COL_WIDTH = 40
 const TEXT_PADDING_BOTTOM = 8
 
 // --- Dynamic Dimensions ---
 const width = computed(() => {
   if (direction.value === 'vertical') {
-    return colCount.value > 0 ? VERTICAL_COL_WIDTH * colCount.value : 360
+    if (verticalColumnLayouts.value.length === 0) return 360;
+    return verticalColumnLayouts.value.reduce((sum, layout) => sum + layout.colWidth, 0);
   }
   return 360
 })
@@ -151,6 +157,29 @@ const sortedColumns = computed(() => {
   const zIndex = store.config.zIndex || { number: 1, name: 2, unit: 3 };
   return [...props.columns].sort((a, b) => (zIndex[a] || 99) - (zIndex[b] || 99));
 })
+
+const verticalColumnLayouts = computed(() => {
+    if (direction.value !== 'vertical') return [];
+    return sortedColumns.value.map(col => {
+        const config = store.config[col] || {};
+        const textContent = props.data[col] || '';
+        const lines = getMultilineText(textContent);
+        const lineCount = lines.length;
+        
+        const mainFontSize = config.fontSize || 20;
+        const hasActiveRange = config.rangeStart > 0 && config.rangeEnd > 0 && config.rangeEnd > config.rangeStart;
+        const rangeFontSize = hasActiveRange ? (config.rangeFontSize || mainFontSize) : mainFontSize;
+        const maxFontSizeInCol = Math.max(mainFontSize, rangeFontSize);
+        
+        const lineHeight = lineCount > 1 ? maxFontSizeInCol * 1.5 : maxFontSizeInCol * 1.2;
+        
+        const requiredTextWidthForMultiLine = (lineCount > 1) ? (lineCount - 1) * lineHeight : 0;
+        const baseWidth = maxFontSizeInCol + 20; // 10px padding on each side
+        const colWidth = baseWidth + requiredTextWidthForMultiLine;
+
+        return { col, colWidth, lineHeight, maxFontSizeInCol };
+    });
+});
 
 // --- UNIFIED LAYOUT CALCULATION ---
 const layouts = computed(() => {
@@ -229,10 +258,9 @@ const layouts = computed(() => {
         text: {
           x: textX,
           y: textY,
-          textAnchor,
-          dominantBaseline: 'middle',
           maxFontSizeInRow: maxFontSizeInRow,
-          lineHeight: lineHeight // 添加行高信息
+          lineHeight: lineHeight,
+          fontFamily: config.fontFamily || 'sans-serif',
         },
         border: { ...borderConfig },
       }
@@ -241,40 +269,47 @@ const layouts = computed(() => {
       currentY += rowHeight + ROW_GAP
     })
   } else { // vertical
-    const colWidth = width.value > 0 && colCount.value > 0 ? width.value / colCount.value : 0;
-    if (colWidth > 0) {
-        sortedColumns.value.forEach((col, idx) => {
-            const config = store.config[col] || {}
-            const borderConfig = config.border || {}
-            
-            const colCenterX = colWidth / 2
-            const colCenterY = height.value / 2
-            
-            const layout = {
-                col,
-                groupTransform: `translate(${idx * colWidth}, 0)`,
-                skewTransform: config.skewAngle ? `translate(${colCenterX}, ${colCenterY}) skewY(${config.skewAngle}) translate(${-colCenterX}, ${-colCenterY})` : '',
-                rect: {
-                    x: 0, y: 0, width: colWidth, height: height.value, rx: config.borderRadius || 0, fill: config.bgColor || 'transparent',
-                },
-                text: {
-                    x: colWidth / 2 + (config.offsetY || 0), // offsetY is repurposed as horizontal shift
-                    y: height.value / 2,
-                    textAnchor: 'middle',
-                    dominantBaseline: 'middle',
-                    writingMode: 'vertical-rl',
-                },
-                border: { ...borderConfig },
-            }
-            resultLayouts.push(layout)
-        })
-    }
+    let currentX = 0;
+    verticalColumnLayouts.value.forEach(vCol => {
+        const { col, colWidth, lineHeight, maxFontSizeInCol } = vCol;
+        const config = store.config[col] || {}
+        const borderConfig = config.border || {}
+        
+        const colCenterX = colWidth / 2
+        const colCenterY = height.value / 2
+        const rectHeight = height.value * ((config.length || 100) / 100)
+        
+        const layout = {
+            col,
+            groupTransform: `translate(${currentX}, 0)`,
+            skewTransform: config.skewAngle ? `translate(${colCenterX}, ${colCenterY}) skewY(${config.skewAngle}) translate(${-colCenterX}, ${-colCenterY})` : '',
+            rect: {
+                x: 0,
+                y: (height.value - rectHeight) / 2,
+                width: colWidth,
+                height: rectHeight,
+                rx: config.borderRadius || 0,
+                fill: config.bgColor || 'transparent',
+            },
+            text: {
+                x: colCenterX + (config.offsetX || 0),
+                y: colCenterY + (config.offsetY || 0),
+                maxFontSizeInCol: maxFontSizeInCol,
+                lineHeight: lineHeight,
+                fontFamily: config.fontFamily || 'sans-serif',
+            },
+            border: { ...borderConfig },
+        };
+        resultLayouts.push(layout);
+        currentX += colWidth;
+    });
   }
 
   // --- Fill common properties (gradient, pattern, text content, etc.) ---
   resultLayouts.forEach(layout => {
     const col = layout.col
     const config = store.config[col] || {}
+    const isVertical = direction.value === 'vertical';
     
     // Gradient & Pattern
     const gradientCfg = gradients[config.gradient]
@@ -286,11 +321,28 @@ const layouts = computed(() => {
         layout.rect.patternFill = `url(#pattern-${col})`
     }
     
+    // Text Anchor
+    let textAnchor = 'middle';
+    if (!isVertical) {
+        const textAlign = config.textAlign || (globalConfig.value ? globalConfig.value.textAlign : 'center');
+        if (textAlign === 'left') {
+            const rectWidth = width.value * ((config.length || 100) / 100);
+            layout.text.x = (width.value - rectWidth) / 2 + 10 + (config.offsetX || 0);
+            textAnchor = 'start';
+        } else if (textAlign === 'right') {
+            const rectWidth = width.value * ((config.length || 100) / 100);
+            layout.text.x = width.value - ((width.value - rectWidth) / 2) - 10 + (config.offsetX || 0);
+            textAnchor = 'end';
+        }
+    }
+
     // Text Content & Style
     Object.assign(layout.text, {
       content: props.data[col] || '',
-      fontFamily: config.fontFamily || 'sans-serif',
-      fontSize: config.fontSize || 32,
+      writingMode: isVertical ? 'vertical-rl' : undefined,
+      textAnchor: textAnchor,
+      dominantBaseline: 'middle',
+      fontSize: config.fontSize || (isVertical ? 20 : 32),
       fontWeight: config.fontWeight || 'normal',
       fontStyle: config.fontStyle || 'normal',
       textDecoration: config.textDecoration || 'none',
