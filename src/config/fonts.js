@@ -1,3 +1,11 @@
+import fangzhengfangsong from '../assets/fonts/Fangzhengfangsong.woff2';
+import jiangxizhuokai from '../assets/fonts/JiangXiZhuoKai.woff2';
+import alibabapuhuiti from '../assets/fonts/Alibaba-PuHuiTi-Regular.woff2';
+import lxgwneoxiheiplus from '../assets/fonts/LXGWNeoXiHeiPlus.woff2';
+import kuaikanshijie from '../assets/fonts/kuaikanshijie.woff2';
+import huxiaobozhenshuai from '../assets/fonts/huxiaobozhenshuai.woff2';
+import smileysansoblique from '../assets/fonts/SmileySans-Oblique.ttf.woff2';
+
 export const standardFonts = [
   { name: '微软雅黑', value: 'Microsoft YaHei, sans-serif' },
   { name: '宋体', value: 'SimSun, serif' },
@@ -14,13 +22,13 @@ export const standardFonts = [
 ];
 
 export const customFonts = [
-  { name: '方正仿宋', value: 'Fangzhengfangsong', path: '/fonts/Fangzhengfangsong.woff2' },
-  { name: '江西拙楷', value: 'JiangXiZhuoKai', path: '/fonts/JiangXiZhuoKai.woff2' },
-  { name: '阿里巴巴普惠体', value: 'Alibaba-PuHuiTi-Regular', path: '/fonts/Alibaba-PuHuiTi-Regular.woff2' },
-  { name: '霞鹜新晰黑', value: 'LXGWNeoXiHeiPlus', path: '/fonts/LXGWNeoXiHeiPlus.woff2' },
-  { name: '快看世界体', value: 'kuaikanshijie', path: '/fonts/kuaikanshijie.woff2' },
-  { name: '胡晓波真帅体', value: 'huxiaobozhenshuai', path: '/fonts/huxiaobozhenshuai.woff2' },
-  { name: '得意黑', value: 'SmileySans-Oblique', path: '/fonts/SmileySans-Oblique.ttf.woff2' },
+  { name: '方正仿宋', value: 'Fangzhengfangsong', path: fangzhengfangsong },
+  { name: '江西拙楷', value: 'JiangXiZhuoKai', path: jiangxizhuokai },
+  { name: '阿里巴巴普惠体', value: 'Alibaba-PuHuiTi-Regular', path: alibabapuhuiti },
+  { name: '霞鹜新晰黑', value: 'LXGWNeoXiHeiPlus', path: lxgwneoxiheiplus },
+  { name: '快看世界体', value: 'kuaikanshijie', path: kuaikanshijie },
+  { name: '胡晓波真帅体', value: 'huxiaobozhenshuai', path: huxiaobozhenshuai },
+  { name: '得意黑', value: 'SmileySans-Oblique', path: smileysansoblique },
 ];
 
 export const fonts = [...standardFonts, ...customFonts]; 

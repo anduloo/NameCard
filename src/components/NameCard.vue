@@ -229,6 +229,8 @@ const layouts = computed(() => {
       const rectCenterX = (width.value - rectWidth) / 2 + rectWidth / 2;
       const rectCenterY = currentY + rowHeight / 2;
 
+      const fontValue = config.fontFamily || 'sans-serif'
+
       const layout = {
         col,
         groupTransform: '',
@@ -246,7 +248,18 @@ const layouts = computed(() => {
           y: textY,
           maxFontSizeInRow: maxFontSizeInRow,
           lineHeight: lineHeight,
-          fontFamily: config.fontFamily || 'sans-serif',
+          fontFamily: fontValue,
+          fontSize: config.fontSize || 32,
+          fontWeight: config.fontWeight || 'normal',
+          fontStyle: config.fontStyle || 'normal',
+          textDecoration: config.textDecoration || 'none',
+          textColor: config.textColor || '#000000',
+          stroke: (config.strokeWidth > 0) ? config.strokeColor : 'none',
+          strokeWidth: config.strokeWidth || 0,
+          filter: (config.shadowBlur > 0 || config.shadowX !== 0 || config.shadowY !== 0) ? `url(#shadow-${col})` : 'none',
+          textAnchor: textAnchor,
+          dominantBaseline: 'middle',
+          writingMode: direction.value === 'vertical' ? 'vertical-rl' : undefined,
         },
         border: { ...borderConfig },
       }
@@ -432,9 +445,25 @@ const globalBgFill = computed(() => {
 const exportableRef = ref(null)
 const customFileName = ref('')
 const defaultFileName = computed(() => {
-  const parts = props.columns.map(c => props.data[c]).filter(Boolean)
-  return parts.length > 0 ? parts.join('_') + '.png' : 'namecard.png'
-})
+  const desiredOrder = ['number', 'name', 'unit'];
+  const parts = desiredOrder
+    .map(key => props.data[key])
+    .filter(Boolean); // filter(Boolean) removes null, undefined, '', 0, false
+
+  let baseName;
+
+  if (parts.length > 0) {
+    baseName = parts.join('_');
+  } else {
+    // Fallback: join all available data if the main ones are missing
+    const allParts = props.columns
+      .map(key => props.data[key])
+      .filter(Boolean);
+    baseName = allParts.length > 0 ? allParts.join('_') : '名片';
+  }
+  
+  return baseName;
+});
 
 const handleExport = async () => {
   if (!exportableRef.value) {
@@ -454,23 +483,29 @@ const handleExportSvg = async () => {
   await exportAsSvg(fileName);
 }
 
-// --- Preload all custom fonts on component mount to avoid race conditions on export ---
+// --- Dynamically inject @font-face rules for custom fonts ---
 onMounted(() => {
-  const preloadFonts = async () => {
-    for (const font of customFonts) {
-      try {
-        const fontFace = new FontFace(font.value, `url(${font.path})`);
-        await fontFace.load();
-        document.fonts.add(fontFace);
-      } catch (err) {
-        console.error(`Failed to preload font: ${font.name}`, err);
-      }
+  const styleId = 'custom-font-faces';
+  if (document.getElementById(styleId)) {
+    return; // Avoid re-injecting styles
+  }
+  
+  const fontFaceRules = customFonts.map(font => `
+    @font-face {
+      font-family: '${font.value}';
+      src: url('${font.path}') format('woff2');
     }
-  };
-  preloadFonts();
+  `).join('\n');
+
+  if (fontFaceRules) {
+    const styleElement = document.createElement('style');
+    styleElement.id = styleId;
+    styleElement.textContent = fontFaceRules;
+    document.head.appendChild(styleElement);
+  }
 });
 
-// --- NEW FONT EMBEDDING LOGIC ---
+// --- NEW FONT EMBEDDING LOGIC FOR EXPORT ---
 const fontMap = new Map(customFonts.map(font => [font.value, font.path]));
 const fontCache = new Map();
 
@@ -655,8 +690,8 @@ function getBorderPath(side, layout) {
 // --- 换行处理工具函数 ---
 function getMultilineText(text) {
   if (!text) return ['']
-  // 处理各种换行符：\r\n, \r, \n
-  return text.toString().split(/\r?\n/)
+  // Handles both \n and \\n from different sources
+  return text.split(/\\n|\n/)
 }
 
 function getLinearGradientPos(angle) {
