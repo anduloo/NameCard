@@ -2,9 +2,8 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
 export const useStyleStore = defineStore('style', () => {
-  // 1. 从localStorage加载初始状态，或使用默认值
-  const storedConfig = localStorage.getItem('namecard-style-config')
-  const initialConfig = storedConfig ? JSON.parse(storedConfig) : {
+  // 默认配置
+  const defaultConfig = {
     global: {
       backgroundType: 'color', // color, gradient, pattern
       bgColor: '#ffffff',
@@ -124,6 +123,10 @@ export const useStyleStore = defineStore('style', () => {
     }
   }
 
+  // 1. 从localStorage加载初始状态，或使用默认值
+  const storedConfig = localStorage.getItem('namecard-style-config')
+  const initialConfig = storedConfig ? JSON.parse(storedConfig) : defaultConfig
+
   const config = ref(initialConfig)
 
   // 2. 监听config的变化，并将其保存到localStorage
@@ -158,5 +161,9 @@ export const useStyleStore = defineStore('style', () => {
     config.value = newConfig;
   }
 
-  return { config, applyTemplate }
+  function resetToDefault() {
+    config.value = JSON.parse(JSON.stringify(defaultConfig));
+  }
+
+  return { config, applyTemplate, resetToDefault }
 }) 
