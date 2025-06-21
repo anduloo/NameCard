@@ -1,6 +1,5 @@
 <template>
   <div :class="styles.toolbarContainer">
-    <h4 style="margin: 0 0 10px 0; font-size: 1.08rem; color: #1677ff; letter-spacing: 1px; font-weight: 600;">全局设置</h4>
     <div :class="styles.modernToolbar">
       <!-- 背景设置 -->
       <div :class="styles.toolbarSection">
@@ -18,6 +17,14 @@
         <div v-if="store.config.global.gradient === 'custom'" :class="styles.controlItem">
           <ColorPicker v-model="store.config.global.gradientStartColor" />
           <ColorPicker v-model="store.config.global.gradientEndColor" />
+        </div>
+        <span :class="styles.divider"></span>
+        <div :class="styles.controlItem">
+          <label>布局方向</label>
+          <select v-model="store.config.direction">
+            <option value="horizontal">水平</option>
+            <option value="vertical">垂直</option>
+          </select>
         </div>
       </div>
       <!-- 边框设置 -->
@@ -49,34 +56,25 @@
           <svg class="iconfont" aria-hidden="true"><use :xlink:href="'#icon-youbiankuang'"></use></svg>
         </button>
       </div>
-      <!-- 形状设置 -->
+      <!-- 形状、对齐设置 -->
       <div :class="styles.toolbarSection">
-        <h5 :class="styles.groupTitle">形状设置</h5>
-        <div :class="styles.controlItem">圆角
-          <input type="number" v-model.number="store.config.global.borderRadius" min="0" max="50" />
-        </div>
-      </div>
-      <!-- 文字对齐 -->
-      <div :class="styles.toolbarSection">
-        <h5 :class="styles.groupTitle">文字对齐</h5>
-        <button :class="[styles.iconBtn, { [styles.active]: store.config.global.textAlign === 'left' }]" @click="store.config.global.textAlign = 'left'">
-          <svg class="iconfont" aria-hidden="true"><use :xlink:href="'#icon-align-left'"></use></svg>
-        </button>
-        <button :class="[styles.iconBtn, { [styles.active]: store.config.global.textAlign === 'center' }]" @click="store.config.global.textAlign = 'center'">
-          <svg class="iconfont" aria-hidden="true"><use :xlink:href="'#icon-align-center'"></use></svg>
-        </button>
-        <button :class="[styles.iconBtn, { [styles.active]: store.config.global.textAlign === 'right' }]" @click="store.config.global.textAlign = 'right'">
-          <svg class="iconfont" aria-hidden="true"><use :xlink:href="'#icon-align-right'"></use></svg>
-        </button>
-      </div>
-      <!-- 布局设置 -->
-      <div :class="styles.toolbarSection">
-        <h5 :class="styles.groupTitle">布局设置</h5>
+        <h5 :class="styles.groupTitle">形状、对齐</h5>
         <div :class="styles.controlItem">
-          <select v-model="store.config.direction">
-            <option value="horizontal">水平</option>
-            <option value="vertical">垂直</option>
-          </select>
+          <label>圆角</label>
+          <input type="number" v-model.number="store.config.global.borderRadius" min="0" max="50" style="width:50px;" />
+        </div>
+        <span :class="styles.divider"></span>
+        <div :class="styles.controlItem">
+          <label>文字对齐</label>
+          <button :class="[styles.iconBtn, { [styles.active]: store.config.global.textAlign === 'left' }]" @click="store.config.global.textAlign = 'left'">
+            <svg class="iconfont" aria-hidden="true"><use :xlink:href="'#icon-align-left'"></use></svg>
+          </button>
+          <button :class="[styles.iconBtn, { [styles.active]: store.config.global.textAlign === 'center' }]" @click="store.config.global.textAlign = 'center'">
+            <svg class="iconfont" aria-hidden="true"><use :xlink:href="'#icon-align-center'"></use></svg>
+          </button>
+          <button :class="[styles.iconBtn, { [styles.active]: store.config.global.textAlign === 'right' }]" @click="store.config.global.textAlign = 'right'">
+            <svg class="iconfont" aria-hidden="true"><use :xlink:href="'#icon-align-right'"></use></svg>
+          </button>
         </div>
       </div>
     </div>

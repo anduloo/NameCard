@@ -69,10 +69,28 @@
         </g>
       </svg>
     </div>
-    <div style="margin-top: 0.5em;">
-      <input v-model="customFileName" :placeholder="defaultFileName" style="width: 70%; max-width: 180px;" />
-      <button @click="handleExport" style="margin-left: 0.5em;">导出PNG</button>
-      <button @click="handleExportSvg" style="margin-left: 0.5em;">导出SVG</button>
+    <div class="export-controls">
+      <div class="export-input-group">
+        <input 
+          v-model="customFileName" 
+          :placeholder="defaultFileName" 
+          class="filename-input"
+        />
+      </div>
+      <div class="export-buttons">
+        <button @click="handleExport" class="export-btn primary">
+          <svg class="btn-icon" aria-hidden="true">
+            <use xlink:href="#icon-png"></use>
+          </svg>
+          导出PNG
+        </button>
+        <button @click="handleExportSvg" class="export-btn secondary">
+          <svg class="btn-icon" aria-hidden="true">
+            <use xlink:href="#icon-svg"></use>
+          </svg>
+          导出SVG
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -101,7 +119,7 @@ const colCount = computed(() => props.columns.length)
 const PADDING = 0 
 const ROW_GAP = 0
 const VERTICAL_COL_WIDTH = 40
-const TEXT_PADDING_BOTTOM = 15
+const TEXT_PADDING_BOTTOM = 8
 
 // --- Dynamic Dimensions ---
 const width = computed(() => {
@@ -144,9 +162,9 @@ const layouts = computed(() => {
       const hasActiveRange = config.rangeStart > 0 && config.rangeEnd > 0 && config.rangeEnd > config.rangeStart
       const rangeFontSize = hasActiveRange ? (config.rangeFontSize || mainFontSize) : mainFontSize
       const maxFontSizeInRow = Math.max(mainFontSize, rangeFontSize)
-      const rowHeight = maxFontSizeInRow * 1.5 + TEXT_PADDING_BOTTOM + (borderConfig.width || 0)
+      const rowHeight = maxFontSizeInRow * 1.2 + TEXT_PADDING_BOTTOM + (borderConfig.width || 0)
       
-      const textY = currentY + rowHeight - TEXT_PADDING_BOTTOM - (maxFontSizeInRow / 2) + (config.offsetY || 0);
+      const textY = currentY + rowHeight - TEXT_PADDING_BOTTOM - (maxFontSizeInRow / 2) + (config.offsetY || 0) + 6;
 
       const rectWidth = width.value * ((config.length || 100) / 100)
       
@@ -542,7 +560,91 @@ defineExpose({ exportAsPng })
 .name-card-svg {
   display: block;
   margin: 1rem auto;
-  border: 1px dashed #999;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--secondary-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.name-card-svg:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.export-controls {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.export-input-group {
+  width: 100%;
+  max-width: 300px;
+}
+
+.filename-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  background: var(--secondary-bg);
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+.filename-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.export-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.export-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.export-btn:active {
+  transform: translateY(0);
+}
+
+.export-btn.primary {
+  background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-hover) 100%);
+  color: white;
+}
+
+.export-btn.secondary {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+}
+
+.btn-icon {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
 }
 </style> 

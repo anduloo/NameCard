@@ -1,6 +1,5 @@
 <template>
   <div :class="styles.toolbarContainer">
-    <h4 style="margin: 0 0 10px 0; font-size: 1.08rem; color: #1677ff; letter-spacing: 1px; font-weight: 600;">姓名列设置</h4>
     <div :class="styles.modernToolbar">
       <!-- 背景设置 -->
       <div :class="styles.toolbarSection">
@@ -17,7 +16,9 @@
         </div>
         <span :class="styles.divider"></span>
         <div v-if="store.config.name.gradient === 'custom'" :class="styles.controlItem">
+          <label>起始色</label>
           <ColorPicker v-model="store.config.name.gradientStartColor" />
+          <label>结束色</label>
           <ColorPicker v-model="store.config.name.gradientEndColor" />
         </div>
       </div>
@@ -69,32 +70,32 @@
 
         <span :class="styles.divider"></span>
         <button :class="[styles.iconBtn, { [styles.active]: store.config.name.border.style.includes('none') }]" @click="toggleBorder('none')">
-          <svg class="iconfont" aria-hidden="true">
+          <svg class="iconfont" aria-hidden="true" width="28" height="28">
             <use :xlink:href="'#icon-wubiankuang'"></use>
           </svg>
         </button>
         <button :class="[styles.iconBtn, { [styles.active]: store.config.name.border.style.includes('all') }]" @click="toggleBorder('all')">
-          <svg class="iconfont" aria-hidden="true">
+          <svg class="iconfont" aria-hidden="true" width="28" height="28">
             <use :xlink:href="'#icon-waibiankuang'"></use>
           </svg>
         </button>
         <button :class="[styles.iconBtn, { [styles.active]: store.config.name.border.style.includes('top') }]" @click="toggleBorder('top')">
-          <svg class="iconfont" aria-hidden="true">
+          <svg class="iconfont" aria-hidden="true" width="28" height="28">
             <use :xlink:href="'#icon-shangbiankuang'"></use>
           </svg>
         </button>
         <button :class="[styles.iconBtn, { [styles.active]: store.config.name.border.style.includes('bottom') }]" @click="toggleBorder('bottom')">
-          <svg class="iconfont" aria-hidden="true">
+          <svg class="iconfont" aria-hidden="true" width="28" height="28">
             <use :xlink:href="'#icon-xiabiankuang'"></use>
           </svg>
         </button>
         <button :class="[styles.iconBtn, { [styles.active]: store.config.name.border.style.includes('left') }]" @click="toggleBorder('left')">
-          <svg class="iconfont" aria-hidden="true">
+          <svg class="iconfont" aria-hidden="true" width="28" height="28">
             <use :xlink:href="'#icon-zuobiankuang'"></use>
           </svg>
         </button>
         <button :class="[styles.iconBtn, { [styles.active]: store.config.name.border.style.includes('right') }]" @click="toggleBorder('right')">
-          <svg class="iconfont" aria-hidden="true">
+          <svg class="iconfont" aria-hidden="true" width="28" height="28">
             <use :xlink:href="'#icon-youbiankuang'"></use>
           </svg>
         </button>
@@ -103,13 +104,16 @@
       <div :class="styles.toolbarSection">
         <h5 :class="styles.groupTitle">形状设置</h5>
         <div :class="styles.controlItem">
-          圆角<input type="number" v-model.number="store.config.name.borderRadius" min="0" max="50" />
+          <label>圆角</label>
+          <input type="number" v-model.number="store.config.name.borderRadius" min="0" max="50" />
         </div>
         <div :class="styles.controlItem">
-          斜角<input type="number" v-model.number="store.config.name.skewAngle" min="-45" max="45" />
+          <label>斜角</label>
+          <input type="number" v-model.number="store.config.name.skewAngle" min="-45" max="45" />
         </div>
         <div :class="styles.controlItem">
-          长度<input type="number" v-model.number="store.config.name.length" min="10" max="100" style="width:50px;" />
+          <label>长度</label>
+          <input type="number" v-model.number="store.config.name.length" min="10" max="100" style="width:50px;" />
         </div>
       </div>
       <!-- 富文本范围样式 -->

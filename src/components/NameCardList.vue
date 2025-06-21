@@ -1,19 +1,43 @@
 <template>
   <div class="name-card-list">
-    <div class="toolbar" style="width: 100%; text-align: center; margin-bottom: 1rem;">
-      <button @click="handleBatchExport">批量导出所有PNG</button>
+    <div class="toolbar">
+      <div class="toolbar-content">
+        <div class="toolbar-left">
+          <h2 class="preview-title">卡片预览</h2>
+          <span v-if="cardData.length > 0" class="card-count">{{ cardData.length }} 张卡片</span>
+        </div>
+        <div class="toolbar-right">
+          <button @click="handleBatchExport" class="export-btn">
+            <svg class="btn-icon" aria-hidden="true">
+              <use xlink:href="#icon-download"></use>
+            </svg>
+            批量导出PNG
+          </button>
+        </div>
+      </div>
     </div>
-    <div v-if="cardData.length === 0" class="placeholder">
-      请先导入数据并选择"姓名"列
+    
+    <div v-if="cardData.length === 0" class="empty-state">
+      <div class="empty-content">
+        <svg class="empty-icon" aria-hidden="true">
+          <use xlink:href="#icon-empty"></use>
+        </svg>
+        <h3 class="empty-title">暂无卡片</h3>
+        <p class="empty-description">请先导入数据并选择"姓名"列来生成卡片</p>
+      </div>
     </div>
-    <NameCard 
-      v-for="(card, index) in cardData"
-      :key="index"
-      :columns="activeColumns"
-      :data="card"
-      ref="nameCardRefs"
-    />
+    
+    <div v-else class="cards-container">
+      <NameCard 
+        v-for="(card, index) in cardData"
+        :key="index"
+        :columns="activeColumns"
+        :data="card"
+        ref="nameCardRefs"
+      />
+    </div>
   </div>
+  
   <!-- Hidden exporter component -->
   <div style="position: absolute; left: -9999px; top: -9999px;">
     <NameCard 
@@ -104,14 +128,151 @@ const nameCardRefs = ref([])
 
 <style scoped>
 .name-card-list {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.toolbar {
+  background: var(--secondary-bg);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.toolbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.preview-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.card-count {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  background: var(--primary-bg);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius);
+  font-weight: 500;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-hover) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.export-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.export-btn:active {
+  transform: translateY(0);
+}
+
+.btn-icon {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+}
+
+.empty-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.empty-content {
+  text-align: center;
+  max-width: 400px;
+}
+
+.empty-icon {
+  width: 4rem;
+  height: 4rem;
+  fill: var(--text-muted);
+  opacity: 0.5;
+  margin-bottom: 1rem;
+}
+
+.empty-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.empty-description {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.cards-container {
+  flex: 1;
+  padding: 1.5rem;
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   justify-content: center;
+  align-content: flex-start;
+  overflow-y: auto;
 }
-.placeholder {
-  color: #888;
-  font-size: 1.2rem;
-  padding: 3rem;
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .toolbar-content {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .toolbar-left {
+    justify-content: center;
+  }
+  
+  .toolbar-right {
+    justify-content: center;
+  }
+  
+  .cards-container {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
 }
 </style> 

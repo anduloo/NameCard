@@ -1,6 +1,5 @@
 <template>
   <div :class="styles.toolbarContainer">
-    <h4 style="margin: 0 0 10px 0; font-size: 1.08rem; color: #1677ff; letter-spacing: 1px; font-weight: 600;">单位列设置</h4>
     <div :class="styles.modernToolbar">
       <!-- 背景设置 -->
       <div :class="styles.toolbarSection">
