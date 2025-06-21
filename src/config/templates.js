@@ -1,7 +1,21 @@
-import templatesData from './templates.json'
+// src/config/templates.js
 
-// 从JSON文件获取模板数据
-const { templates } = templatesData
+// Use Vite's glob import to dynamically import all template JSON files
+const modules = import.meta.glob('./templates/*.json', { eager: true });
+
+const templates = {};
+
+for (const path in modules) {
+  // Extract the file name without extension to use as the key (e.g., 'business', 'modern')
+  const key = path.split('/').pop().replace('.json', '');
+  templates[key] = modules[path];
+}
+
+export { templates };
+
+// You might need a default export or a different structure depending on how it was used before.
+// Based on the old file, it seems 'templates' was the main export.
+export default templates;
 
 // 获取所有模板
 export function getAllTemplates() {
@@ -43,7 +57,4 @@ export function applyTemplate(templateId, store) {
     return true
   }
   return false
-}
-
-// 导出模板数据供其他组件使用
-export { templates } 
+} 

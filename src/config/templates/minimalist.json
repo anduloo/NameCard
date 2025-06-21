@@ -1,0 +1,86 @@
+{
+  "name": "极简主义",
+  "description": "去除所有不必要的元素，只留核心信息",
+  "config": {
+    "global": {
+      "bgColor": "#ffffff",
+      "gradient": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "textAlign": "left"
+    },
+    "name": {
+      "bgColor": "transparent",
+      "textColor": "#000000",
+      "fontFamily": "Helvetica Neue",
+      "fontSize": 32,
+      "fontWeight": "300",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 100,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "transparent",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 0
+    },
+    "number": {
+      "bgColor": "transparent",
+      "textColor": "#333333",
+      "fontFamily": "Helvetica Neue",
+      "fontSize": 20,
+      "fontWeight": "300",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 100,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "transparent",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 0
+    },
+    "unit": {
+      "bgColor": "transparent",
+      "textColor": "#666666",
+      "fontFamily": "Helvetica Neue",
+      "fontSize": 16,
+      "fontWeight": "300",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 100,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "transparent",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 0
+    }
+  }
+} 

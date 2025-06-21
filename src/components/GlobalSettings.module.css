@@ -1,100 +1,86 @@
 /* GlobalSettings.module.css */
 .toolbarContainer {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);
-  margin-bottom: 0px;
-  padding: 10px 10px 10px 10px;
-  max-width: 480px;
-  min-width: 340px;
-  transition: box-shadow 0.2s;
+  /* This container is now redundant as padding is handled by card-content */
 }
 .modernToolbar {
   display: flex;
   flex-direction: column;
-  gap: 0px 0;
+  gap: 8px; /* Use a consistent gap */
 }
 .toolbarSection {
   display: flex;
-  align-items: flex-start;
-  gap: 4px;
-  padding: 4px 4px 4px 4px;
-  min-height: 36px;
-  margin-bottom: 2px;
-  margin-top: 0;
-  background: #f4f7fa;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+  align-items: center;
+  gap: 0.5rem;
+  padding: 8px;
+  background: var(--secondary-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
   flex-wrap: wrap;
   position: relative;
-  transition: box-shadow 0.2s, background 0.2s;
+  transition: all 0.2s ease;
 }
-.toolbarSection:first-of-type {
-  margin-top: 0;
-}
-.toolbarSection:last-of-type {
-  margin-bottom: 0;
+.toolbarSection:hover {
+    border-color: var(--accent-color);
+    box-shadow: var(--shadow-sm);
 }
 .groupTitle {
-  font-size: 15px;
-  color: hwb(220 38% 61%);
+  font-size: 0.875rem; /* 14px */
+  color: var(--text-muted);
   font-weight: 600;
-  margin: 0 0 6px 0;
-  letter-spacing: 0.5px;
+  margin: 0;
   flex-basis: 100%;
-  padding-left: 2px;
+  padding-bottom: 0.5rem; /* spacing */
+  border-bottom: 1px solid var(--border-color); /* Separator */
+  margin-bottom: 0.25rem;
 }
 .controlItem {
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-width: 0;
-  margin-bottom: 2px;
+  gap: 0.5rem;
 }
 .controlItem label {
-  font-size: 15px;
+  font-size: 0.875rem;
   font-weight: 500;
-  margin-right: 4px;
+  color: var(--text-color);
   white-space: nowrap;
-  min-width: 56px;
-  text-align: right;
-  color: #444;
-  letter-spacing: 0.5px;
 }
 .controlItem input,
 .controlItem select {
-  height: 30px;
-  padding: 0 8px;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  font-size: 15px;
-  box-sizing: border-box;
-  min-width: 56px;
-  max-width: 120px;
+  height: 32px;
+  padding: 0 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  background: var(--primary-bg);
+  color: var(--text-color);
+  transition: all 0.2s;
   outline: none;
-  background: #f9fafb;
-  transition: border 0.2s;
-  margin-right: 2px;
+}
+.fontSelect {
+  max-width: 120px;
+}
+.controlItem input:focus,
+.controlItem select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 .controlItem input[type="number"] {
   width: 60px;
-  min-width: 40px;
-  max-width: 80px;
 }
 .iconBtn {
-  margin: 0 2px;
-  padding: 4px;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
+  margin: 0;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
   cursor: pointer;
-  background-color: #fff;
+  background-color: var(--secondary-bg);
+  color: var(--text-muted);
   transition: all 0.2s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  line-height: 1;
-  width: 28px;
-  height: 28px;
 }
 
 .iconBtn svg {
@@ -102,19 +88,152 @@
   height: 18px;
 }
 
-.iconBtn.active, .iconBtn:focus, .iconBtn:hover {
-  background: #e6f0ff;
-  color: #1677ff;
-  box-shadow: 0 0 0 2px #1677ff33;
+.iconBtn:hover {
+  color: var(--accent-color);
+  border-color: var(--accent-color);
 }
-.iconBtn i.iconfont {
-  font-size: 18px;
+.iconBtn.active {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: white;
 }
 .divider {
   width: 1px;
-  height: 28px;
-  background-color: #e0e0e0;
-  margin: 0 8px;
-  flex-shrink: 0;
-  border-radius: 2px;
+  align-self: stretch;
+  background-color: var(--border-color);
+  margin: 0 0.25rem;
+}
+
+/* Styles moved from ConfigPanel.vue */
+.configPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.configCard {
+  background: var(--secondary-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.configCard:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.cardHeader {
+  background: linear-gradient(135deg, white 0%, #f0f9ff 100%);
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  fill: var(--accent-color);
+}
+
+.cardContent {
+  padding:8px;
+}
+
+.templateList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.templateItem {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 1rem;
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.templateItem:hover {
+  border-color: var(--accent-color);
+  background: var(--primary-bg);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.templateName {
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.templateDesc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+.templateActions {
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.resetBtn {
+  background: var(--secondary-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resetBtn:hover {
+  background: var(--primary-bg);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  transform: translateY(-1px);
+}
+
+.cardHeader.clickable {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.cardHeader.clickable:hover {
+  background-color: #f0f0f0;
+}
+
+.chevron {
+  margin-left: auto;
+  transition: transform 0.3s ease;
+}
+
+.chevron.rotated {
+  transform: rotate(180deg);
+}
+
+.templateList {
+  max-height: 300px;
+  overflow-y: auto;
 } 

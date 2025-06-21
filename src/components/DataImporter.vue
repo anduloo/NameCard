@@ -1,8 +1,8 @@
 <template>
-  <div class="data-importer">
-    <div class="importer-card">
+  <div :class="styles.dataImporter">
+    <div :class="styles.importerCard">
       
-      <div class="upload-area" @click="triggerFileInput" @drop="handleDrop" @dragover.prevent @dragenter.prevent>
+      <div :class="styles.uploadArea" @click="triggerFileInput" @drop="handleDrop" @dragover.prevent @dragenter.prevent>
         <input
           ref="fileInput"
           type="file"
@@ -10,21 +10,21 @@
           @change="handleFileChange"
           style="display: none"
         />
-        <div class="upload-content">
-          <svg class="upload-icon" aria-hidden="true">
+        <div :class="styles.uploadContent">
+          <svg :class="styles.uploadIcon" aria-hidden="true">
             <use xlink:href="#icon-upload"></use>
           </svg>
-          <p class="upload-text">点击或拖拽Excel文件到此处</p>
-          <p class="upload-hint">支持 .xlsx 和 .xls 格式</p>
+          <p :class="styles.uploadText">点击或拖拽Excel文件到此处</p>
+          <p :class="styles.uploadHint">支持 .xlsx 和 .xls 格式</p>
         </div>
       </div>
 
-      <div v-if="table && table.length > 0" class="data-config">
-        <div class="config-header">
+      <div v-if="table && table.length > 0" :class="styles.dataConfig">
+        <div :class="styles.configHeader">
           <h4>列配置</h4>
-          <div class="config-actions">
-            <span class="data-info">{{ table.length - 1 }} 行数据</span>
-            <button @click="showModal = true" class="preview-btn">
+          <div :class="styles.configActions">
+            <span :class="styles.dataInfo">{{ table.length - 1 }} 行数据</span>
+            <button @click="showModal = true" :class="styles.previewBtn">
               <svg class="btn-icon" aria-hidden="true">
                 <use xlink:href="#icon-eye"></use>
               </svg>
@@ -33,41 +33,41 @@
           </div>
         </div>
         
-        <div class="column-selector">
-          <div class="selector-group">
-            <label class="selector-label">
-              <svg class="icon" aria-hidden="true">
+        <div :class="styles.columnSelector">
+          <div :class="styles.selectorGroup">
+            <label :class="styles.selectorLabel">
+              <svg :class="styles.icon" aria-hidden="true">
                 <use xlink:href="#icon-number"></use>
               </svg>
               号码列
             </label>
-            <select v-model="store.colNumber" class="selector-input">
+            <select v-model="store.colNumber" :class="styles.selectorInput">
               <option value="">请选择</option>
               <option v-for="(col, index) in table[0]" :key="index" :value="index">{{ col }}</option>
             </select>
           </div>
           
-          <div class="selector-group">
-            <label class="selector-label">
-              <svg class="icon" aria-hidden="true">
+          <div :class="styles.selectorGroup">
+            <label :class="styles.selectorLabel">
+              <svg :class="styles.icon" aria-hidden="true">
                 <use xlink:href="#icon-name"></use>
               </svg>
               姓名列
             </label>
-            <select v-model="store.colName" class="selector-input">
+            <select v-model="store.colName" :class="styles.selectorInput">
               <option value="">请选择</option>
               <option v-for="(col, index) in table[0]" :key="index" :value="index">{{ col }}</option>
             </select>
           </div>
           
-          <div class="selector-group">
-            <label class="selector-label">
-              <svg class="icon" aria-hidden="true">
+          <div :class="styles.selectorGroup">
+            <label :class="styles.selectorLabel">
+              <svg :class="styles.icon" aria-hidden="true">
                 <use xlink:href="#icon-unit"></use>
               </svg>
               单位列
             </label>
-            <select v-model="store.colUnit" class="selector-input">
+            <select v-model="store.colUnit" :class="styles.selectorInput">
               <option value="">请选择</option>
               <option v-for="(col, index) in table[0]" :key="index" :value="index">{{ col }}</option>
             </select>
@@ -92,6 +92,7 @@ import { ref } from 'vue'
 import { useDataStore } from '@/stores/dataStore'
 import PreviewModal from './PreviewModal.vue'
 import * as XLSX from 'xlsx'
+import styles from './DataImporter.module.css'
 
 const store = useDataStore()
 const fileInput = ref(null)
@@ -246,7 +247,7 @@ function handleConfirmPreview() {
 }
 
 .config-header {
-  display: flex;
+   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;

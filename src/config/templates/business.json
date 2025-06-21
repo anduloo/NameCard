@@ -1,0 +1,86 @@
+{
+  "name": "简约商务",
+  "description": "适合正式场合的简洁商务风格",
+  "config": {
+    "global": {
+      "bgColor": "#ffffff",
+      "gradient": "none",
+      "border": {
+        "color": "#e0e0e0",
+        "width": 1,
+        "style": ["all"]
+      },
+      "borderRadius": 8,
+      "textAlign": "center"
+    },
+    "name": {
+      "bgColor": "#f8f9fa",
+      "textColor": "#2c3e50",
+      "fontFamily": "Microsoft YaHei",
+      "fontSize": 24,
+      "fontWeight": "bold",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "#dee2e6",
+        "width": 1,
+        "style": ["bottom"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 60,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "transparent",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 0
+    },
+    "number": {
+      "bgColor": "#ffffff",
+      "textColor": "#495057",
+      "fontFamily": "Microsoft YaHei",
+      "fontSize": 18,
+      "fontWeight": "normal",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 60,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "transparent",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 0
+    },
+    "unit": {
+      "bgColor": "#ffffff",
+      "textColor": "#6c757d",
+      "fontFamily": "Microsoft YaHei",
+      "fontSize": 14,
+      "fontWeight": "normal",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 60,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "transparent",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 0
+    }
+  }
+} 

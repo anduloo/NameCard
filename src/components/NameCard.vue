@@ -81,33 +81,19 @@
       </svg>
     </div>
     <div class="export-controls">
-      <div class="export-input-group">
         <input 
           v-model="customFileName" 
           :placeholder="defaultFileName" 
           class="filename-input"
         />
-      </div>
-      <div class="export-buttons">
-        <button @click="handleExport" class="export-btn primary">
-          <svg class="btn-icon" aria-hidden="true">
-            <use xlink:href="#icon-png"></use>
-          </svg>
-          导出PNG
-        </button>
-        <button @click="handleExportSvg" class="export-btn secondary">
-          <svg class="btn-icon" aria-hidden="true">
-            <use xlink:href="#icon-svg"></use>
-          </svg>
-          导出SVG
-        </button>
-      </div>
+        <button @click="handleExport" class="export-btn primary">PNG</button>
+        <button @click="handleExportSvg" class="export-btn secondary">SVG</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useStyleStore } from '@/stores/styleStore'
 import { gradients } from '@/config/gradients'
 import { patterns } from '@/config/patterns'
@@ -271,38 +257,37 @@ const layouts = computed(() => {
   } else { // vertical
     let currentX = 0;
     verticalColumnLayouts.value.forEach(vCol => {
-        const { col, colWidth, lineHeight, maxFontSizeInCol } = vCol;
-        const config = store.config[col] || {}
-        const borderConfig = config.border || {}
-        
-        const colCenterX = colWidth / 2
-        const colCenterY = height.value / 2
-        const rectHeight = height.value * ((config.length || 100) / 100)
-        
-        const layout = {
-            col,
-            groupTransform: `translate(${currentX}, 0)`,
-            skewTransform: config.skewAngle ? `translate(${colCenterX}, ${colCenterY}) skewY(${config.skewAngle}) translate(${-colCenterX}, ${-colCenterY})` : '',
-            rect: {
-                x: 0,
-                y: (height.value - rectHeight) / 2,
-                width: colWidth,
-                height: rectHeight,
-                rx: config.borderRadius || 0,
-                fill: config.bgColor || 'transparent',
-            },
-            text: {
-                x: colCenterX + (config.offsetX || 0),
-                y: colCenterY + (config.offsetY || 0),
-                maxFontSizeInCol: maxFontSizeInCol,
-                lineHeight: lineHeight,
-                fontFamily: config.fontFamily || 'sans-serif',
-            },
-            border: { ...borderConfig },
-        };
-        resultLayouts.push(layout);
-        currentX += colWidth;
-    });
+      const { col, colWidth, lineHeight } = vCol;
+      const config = store.config[col] || {}
+      const borderConfig = config.border || {}
+      
+      const colCenterX = colWidth / 2
+      const colCenterY = height.value / 2
+      const rectHeight = height.value * ((config.length || 100) / 100)
+      
+      const layout = {
+        col,
+        groupTransform: `translate(${currentX}, 0)`,
+        skewTransform: config.skewAngle ? `translate(${colCenterX}, ${colCenterY}) skewY(${config.skewAngle}) translate(${-colCenterX}, ${-colCenterY})` : '',
+        rect: {
+          x: 0, 
+          y: (height.value - rectHeight) / 2,
+          width: colWidth,
+          height: rectHeight,
+          rx: config.borderRadius,
+          fill: config.bgColor || 'transparent',
+        },
+        text: {
+          x: colCenterX + (config.offsetX || 0),
+          y: colCenterY + (config.offsetY || 0),
+          content: props.data[col] || '',
+          lineHeight: lineHeight
+        },
+        border: { ...borderConfig },
+      }
+      resultLayouts.push(layout)
+      currentX += colWidth
+    })
   }
 
   // --- Fill common properties (gradient, pattern, text content, etc.) ---
@@ -321,9 +306,18 @@ const layouts = computed(() => {
         layout.rect.patternFill = `url(#pattern-${col})`
     }
     
-    // Text Anchor
+    // Text Anchor & Vertical Alignment
     let textAnchor = 'middle';
-    if (!isVertical) {
+    let dominantBaseline = 'middle';
+    
+    if (isVertical) {
+      const textAlign = config.textAlign || (globalConfig.value ? globalConfig.value.textAlign : 'center');
+      if (textAlign === 'left') { // Top
+        dominantBaseline = 'hanging';
+      } else if (textAlign === 'right') { // Bottom
+        dominantBaseline = 'auto';
+      }
+    } else {
         const textAlign = config.textAlign || (globalConfig.value ? globalConfig.value.textAlign : 'center');
         if (textAlign === 'left') {
             const rectWidth = width.value * ((config.length || 100) / 100);
@@ -341,7 +335,7 @@ const layouts = computed(() => {
       content: props.data[col] || '',
       writingMode: isVertical ? 'vertical-rl' : undefined,
       textAnchor: textAnchor,
-      dominantBaseline: 'middle',
+      dominantBaseline: dominantBaseline,
       fontSize: config.fontSize || (isVertical ? 20 : 32),
       fontWeight: config.fontWeight || 'normal',
       fontStyle: config.fontStyle || 'normal',
@@ -460,9 +454,42 @@ const handleExportSvg = async () => {
   await exportAsSvg(fileName);
 }
 
+// --- Preload all custom fonts on component mount to avoid race conditions on export ---
+onMounted(() => {
+  const preloadFonts = async () => {
+    for (const font of customFonts) {
+      try {
+        const fontFace = new FontFace(font.value, `url(${font.path})`);
+        await fontFace.load();
+        document.fonts.add(fontFace);
+      } catch (err) {
+        console.error(`Failed to preload font: ${font.name}`, err);
+      }
+    }
+  };
+  preloadFonts();
+});
+
 // --- NEW FONT EMBEDDING LOGIC ---
 const fontMap = new Map(customFonts.map(font => [font.value, font.path]));
 const fontCache = new Map();
+
+// A new computed property to reliably get all fonts currently in use
+const fontsInUse = computed(() => {
+  const fonts = new Set();
+  const allConfigs = [store.config.global, ...props.columns.map(c => store.config[c])];
+
+  for (const config of allConfigs) {
+    if (config && config.fontFamily && fontMap.has(config.fontFamily)) {
+      fonts.add(config.fontFamily);
+    }
+    // Also check for range-specific fonts
+    if (config && config.rangeFontFamily && fontMap.has(config.rangeFontFamily)) {
+        fonts.add(config.rangeFontFamily);
+    }
+  }
+  return fonts;
+});
 
 async function toBase64(url) {
   if (fontCache.has(url)) {
@@ -482,19 +509,12 @@ async function toBase64(url) {
 }
 
 async function embedFonts(svgNode) {
-    const fontsToEmbed = new Set();
-    // Check global font
-    if (globalConfig.value.fontFamily && fontMap.has(globalConfig.value.fontFamily)) {
-        fontsToEmbed.add(globalConfig.value.fontFamily);
-    }
-    // Check fonts in each layout
-    layouts.value.forEach(layout => {
-        if (layout.text.fontFamily && fontMap.has(layout.text.fontFamily)) {
-            fontsToEmbed.add(layout.text.fontFamily);
-        }
-    });
+    const fontsToEmbed = fontsInUse.value;
 
-    if (fontsToEmbed.size === 0) return;
+    if (fontsToEmbed.size === 0) {
+      // Return an empty cleanup function if no fonts to embed
+      return () => {};
+    }
 
     const fontFaces = await Promise.all(
         Array.from(fontsToEmbed).map(async fontFamily => {
@@ -588,15 +608,20 @@ const exportAsPng = async (fileName = 'namecard.png') => {
     }
     
     const img = new Image();
-    
-    await new Promise((resolve, reject) => {
-        img.onload = () => resolve();
-        img.onerror = (err) => {
-            console.error("加载SVG数据URL到Image时失败: ", err);
-            reject(new Error("无法将生成的SVG图像加载到Image对象中。"));
-        };
-        img.src = svgDataUrl;
-    });
+    img.src = svgDataUrl;
+
+    try {
+        // Use img.decode() to prevent race conditions.
+        // This ensures the image, including any embedded fonts, is fully loaded and ready to be drawn.
+        await img.decode();
+    } catch (error) {
+        console.error("Image decoding failed. This can happen in some environments. Falling back to onload.", error);
+        // Fallback for environments where decode() might not work as expected with SVG data URLs
+        await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = (err) => reject(new Error("无法将生成的SVG图像加载到Image对象中。"));
+        });
+    }
     
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     
@@ -652,7 +677,7 @@ defineExpose({ exportAsPng })
   display: block;
   margin: 1rem auto;
   border: 1px solid var(--border-color);
-  background: var(--secondary-bg);
+  background: linear-gradient(135deg, #f0f9ff 0%,rgba(244, 255, 240, 0.53) 100%);
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
@@ -666,18 +691,16 @@ defineExpose({ exportAsPng })
 .export-controls {
   margin-top: 1rem;
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
   align-items: center;
-}
-
-.export-input-group {
-  width: 100%;
-  max-width: 300px;
+  justify-content: center;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .filename-input {
-  width: 100%;
+  flex-grow: 1;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
@@ -693,17 +716,7 @@ defineExpose({ exportAsPng })
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.export-buttons {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
 .export-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: var(--radius);
@@ -712,30 +725,29 @@ defineExpose({ exportAsPng })
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: var(--shadow-sm);
+  white-space: nowrap;
 }
 
 .export-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.export-btn:active {
   transform: translateY(0);
+  filter: brightness(0.95);
 }
 
-.export-btn.primary {
-  background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-hover) 100%);
-  color: white;
-}
-
+.export-btn.primary,
 .export-btn.secondary {
-  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-  color: white;
+  background: var(--secondary-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.export-btn.primary:hover,
+.export-btn.secondary:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background: var(--primary-bg);
 }
 
 .btn-icon {
-  width: 1rem;
-  height: 1rem;
-  fill: currentColor;
+  display: none;
 }
 </style> 

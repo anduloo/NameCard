@@ -1,0 +1,86 @@
+{
+  "name": "中国风传统",
+  "description": "融合了传统书法和水墨画元素",
+  "config": {
+    "global": {
+      "bgColor": "#f9f2f4",
+      "gradient": "none",
+      "border": {
+        "color": "#d32f2f",
+        "width": 3,
+        "style": ["all"]
+      },
+      "borderRadius": 1,
+      "textAlign": "center"
+    },
+    "name": {
+      "bgColor": "#ffffff",
+      "textColor": "#d32f2f",
+      "fontFamily": "JiangXiZhuoKai",
+      "fontSize": 32,
+      "fontWeight": "bold",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "d32f2f",
+        "width": 2,
+        "style": ["bottom"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 80,
+      "strokeColor": "#d32f2f",
+      "strokeWidth": 1,
+      "shadowColor": "rgba(211,47,47,0.3)",
+      "shadowX": 1,
+      "shadowY": 1,
+      "shadowBlur": 3
+    },
+    "number": {
+      "bgColor": "#ffffff",
+      "textColor": "#b71c1c",
+      "fontFamily": "JiangXiZhuoKai",
+      "fontSize": 24,
+      "fontWeight": "normal",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "#d32f2f",
+        "width": 1,
+        "style": ["bottom"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 80,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "rgba(211,47,47,0.2)",
+      "shadowX": 1,
+      "shadowY": 1,
+      "shadowBlur": 2
+    },
+    "unit": {
+      "bgColor": "#ffffff",
+      "textColor": "#d32f2f",
+      "fontFamily": "JiangXiZhuoKai",
+      "fontSize": 20,
+      "fontWeight": "normal",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 80,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "transparent",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 0
+    }
+  }
+} 

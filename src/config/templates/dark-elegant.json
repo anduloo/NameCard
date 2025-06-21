@@ -1,0 +1,86 @@
+{
+  "name": "典雅黑金",
+  "description": "深色背景搭配金色文字，尽显高级",
+  "config": {
+    "global": {
+      "bgColor": "#1a1a1a",
+      "gradient": "none",
+      "border": {
+        "color": "#d4af37",
+        "width": 1.5,
+        "style": ["all"]
+      },
+      "borderRadius": 10,
+      "textAlign": "center"
+    },
+    "name": {
+      "bgColor": "transparent",
+      "textColor": "#d4af37",
+      "fontFamily": "Georgia",
+      "fontSize": 26,
+      "fontWeight": "bold",
+      "fontStyle": "italic",
+      "textDecoration": "none",
+      "border": {
+        "color": "#d4af37",
+        "width": 1,
+        "style": ["bottom"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 80,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "rgba(212, 175, 55, 0.3)",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 10
+    },
+    "number": {
+      "bgColor": "transparent",
+      "textColor": "#e0e0e0",
+      "fontFamily": "Georgia",
+      "fontSize": 20,
+      "fontWeight": "normal",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 80,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "transparent",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 0
+    },
+    "unit": {
+      "bgColor": "transparent",
+      "textColor": "#d4af37",
+      "fontFamily": "Georgia",
+      "fontSize": 16,
+      "fontWeight": "normal",
+      "fontStyle": "italic",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 80,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "transparent",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 0
+    }
+  }
+} 

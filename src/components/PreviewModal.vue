@@ -120,7 +120,7 @@ function handleConfirm() {
   box-shadow: var(--shadow-lg);
   max-width: 90vw;
   max-height: 90vh;
-  width: 800px;
+  width: 1200px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -142,7 +142,7 @@ function handleConfirm() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem;
+  padding: 8px;
   border-bottom: 1px solid var(--border-color);
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
 }
@@ -188,14 +188,14 @@ function handleConfirm() {
 
 .modal-content {
   flex: 1;
-  padding: 1.5rem;
+  padding: 1rem;
   overflow-y: auto;
 }
 
 .data-info {
   display: flex;
   gap: 2rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 8px;
   padding: 1rem;
   background: var(--primary-bg);
   border-radius: var(--radius);

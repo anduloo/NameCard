@@ -14,9 +14,6 @@ export const standardFonts = [
 ];
 
 export const customFonts = [
-  { name: '站酷庆科黄油体', value: 'ZhanKuQingKeHuangYouTi', path: '/fonts/ZhanKuQingKeHuangYouTi.woff2' },
-  { name: 'OPPO Sans', value: 'OPPO Sans', path: '/fonts/OPPO Sans 4.0.woff2' },
-  { name: '小米可变字体', value: 'MiSans VF', path: '/fonts/MiSans VF.woff2' },
   { name: '方正仿宋', value: 'Fangzhengfangsong', path: '/fonts/Fangzhengfangsong.woff2' },
   { name: '江西拙楷', value: 'JiangXiZhuoKai', path: '/fonts/JiangXiZhuoKai.woff2' },
   { name: '阿里巴巴普惠体', value: 'Alibaba-PuHuiTi-Regular', path: '/fonts/Alibaba-PuHuiTi-Regular.woff2' },

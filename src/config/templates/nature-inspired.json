@@ -1,0 +1,86 @@
+{
+  "name": "自然灵感",
+  "description": "灵感源于自然的柔和色调和纹理",
+  "config": {
+    "global": {
+      "bgColor": "#e8f5e9",
+      "gradient": "none",
+      "border": {
+        "color": "#a5d6a7",
+        "width": 1,
+        "style": ["all"]
+      },
+      "borderRadius": 10,
+      "textAlign": "center"
+    },
+    "name": {
+      "bgColor": "transparent",
+      "textColor": "#2e7d32",
+      "fontFamily": "SmileySans-Oblique",
+      "fontSize": 26,
+      "fontWeight": "bold",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "#c8e6c9",
+        "width": 2,
+        "style": ["bottom"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 80,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "transparent",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 0
+    },
+    "number": {
+      "bgColor": "transparent",
+      "textColor": "#388e3c",
+      "fontFamily": "SmileySans-Oblique",
+      "fontSize": 20,
+      "fontWeight": "normal",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 80,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "transparent",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 0
+    },
+    "unit": {
+      "bgColor": "transparent",
+      "textColor": "#66bb6a",
+      "fontFamily": "SmileySans-Oblique",
+      "fontSize": 16,
+      "fontWeight": "normal",
+      "fontStyle": "italic",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 80,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "transparent",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 0
+    }
+  }
+} 

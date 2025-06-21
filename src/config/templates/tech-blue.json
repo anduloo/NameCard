@@ -1,0 +1,86 @@
+{
+  "name": "科技蓝光",
+  "description": "充满未来感的深蓝科技主题",
+  "config": {
+    "global": {
+      "bgColor": "#0d1a26",
+      "gradient": "linear-gradient(135deg, #0d1a26 0%, #1a2b3c 100%)",
+      "border": {
+        "color": "#00aaff",
+        "width": 1,
+        "style": ["all"]
+      },
+      "borderRadius": 4,
+      "textAlign": "center"
+    },
+    "name": {
+      "bgColor": "transparent",
+      "textColor": "#00aaff",
+      "fontFamily": "Alibaba-PuHuiTi-Regular",
+      "fontSize": 30,
+      "fontWeight": "bold",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "#00aaff",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 90,
+      "strokeColor": "#00aaff",
+      "strokeWidth": 0.5,
+      "shadowColor": "#00aaff",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 15
+    },
+    "number": {
+      "bgColor": "transparent",
+      "textColor": "#e0e0e0",
+      "fontFamily": "Alibaba-PuHuiTi-Regular",
+      "fontSize": 24,
+      "fontWeight": "normal",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 90,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "transparent",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 0
+    },
+    "unit": {
+      "bgColor": "transparent",
+      "textColor": "#00aaff",
+      "fontFamily": "Alibaba-PuHuiTi-Regular",
+      "fontSize": 18,
+      "fontWeight": "normal",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 90,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "transparent",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 0
+    }
+  }
+} 

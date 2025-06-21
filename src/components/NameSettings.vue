@@ -29,7 +29,7 @@
           <ColorPicker v-model="store.config.name.textColor" />
         </div>
         <div :class="styles.controlItem">
-          <select v-model="store.config.name.fontFamily">
+          <select v-model="store.config.name.fontFamily" :class="styles.fontSelect">
             <optgroup label="标准字体">
               <option v-for="font in standardFonts" :key="font.value" :value="font.value">{{ font.name }}</option>
             </optgroup>
@@ -113,18 +113,18 @@
         </div>
         <div :class="styles.controlItem">
           <label>长度</label>
-          <input type="number" v-model.number="store.config.name.length" min="10" max="100" style="width:50px;" />
+          <input type="number" v-model.number="store.config.name.length" min="10" max="100" />
         </div>
       </div>
       <!-- 富文本范围样式 -->
       <div :class="styles.toolbarSection">
         <h5 :class="styles.groupTitle">文字范围样式</h5>
         <div :class="styles.controlItem">
-          <input type="number" v-model.number="store.config.name.rangeStart" min="0" style="width:50px;" /> -
-          <input type="number" v-model.number="store.config.name.rangeEnd" :min="store.config.name.rangeStart+1" style="width:50px;" />
+          <input type="number" v-model.number="store.config.name.rangeStart" min="0" /> -
+          <input type="number" v-model.number="store.config.name.rangeEnd" :min="store.config.name.rangeStart+1" />
         </div>
         <div :class="styles.controlItem">
-          <input type="number" v-model.number="store.config.name.rangeFontSize" min="8" max="72" style="width:45px; font-size:15px;" />
+          <input type="number" v-model.number="store.config.name.rangeFontSize" min="8" max="72" />
           <button :class="[styles.iconBtn, { [styles.active]: store.config.name.rangeFontWeight === 'bold' }]" @click="toggleRangeStyle('fontWeight', 'bold')">
             <svg class="iconfont" aria-hidden="true">
               <use :xlink:href="'#icon-bold'"></use>
@@ -147,14 +147,14 @@
         <h5 :class="styles.groupTitle">描边与阴影</h5>
         <div :class="styles.controlItem">
           <ColorPicker v-model="store.config.name.strokeColor" />
-          <input type="number" v-model.number="store.config.name.strokeWidth" min="0" max="10" step="0.5" style="width:50px;" />
+          <input type="number" v-model.number="store.config.name.strokeWidth" min="0" max="10" step="0.5" />
         </div>
         <span :class="styles.divider"></span>
         <div :class="styles.controlItem">
           <ColorPicker v-model="store.config.name.shadowColor" />
-          <span></span><input type="number" v-model.number="store.config.name.shadowX" min="-10" max="10" style="width:40px;" />
-          <span></span><input type="number" v-model.number="store.config.name.shadowY" min="-10" max="10" style="width:40px;" />
-          <span></span><input type="number" v-model.number="store.config.name.shadowBlur" min="0" max="20" style="width:40px;" />
+          <span></span><input type="number" v-model.number="store.config.name.shadowX" min="-10" max="10" />
+          <span></span><input type="number" v-model.number="store.config.name.shadowY" min="-10" max="10" />
+          <span></span><input type="number" v-model.number="store.config.name.shadowBlur" min="0" max="20" />
         </div>
       </div>
     </div>
@@ -166,16 +166,22 @@ import { useStyleStore } from '@/stores/styleStore'
 import ColorPicker from './ColorPicker.vue'
 import { gradients } from '@/config/gradients'
 import { standardFonts, customFonts } from '@/config/fonts'
-import styles from './NameSettings.module.css'
+import styles from './GlobalSettings.module.css'
 import { watch } from 'vue'
 
 const store = useStyleStore()
 
 function toggleStyle(prop, value) {
-  if (store.config.name[prop] === value) {
-    store.config.name[prop] = 'normal'
+  const currentVal = store.config.name[prop];
+  let defaultVal = 'normal';
+  if (prop === 'textDecoration') {
+    defaultVal = 'none';
+  }
+
+  if (currentVal === value) {
+    store.config.name[prop] = defaultVal;
   } else {
-    store.config.name[prop] = value
+    store.config.name[prop] = value;
   }
 }
 
@@ -199,10 +205,11 @@ function toggleBorder(side) {
 }
 
 function toggleRangeStyle(prop, value) {
-  if (store.config.name[`range${prop.charAt(0).toUpperCase()+prop.slice(1)}`] === value) {
-    store.config.name[`range${prop.charAt(0).toUpperCase()+prop.slice(1)}`] = (prop === 'fontWeight' ? 'normal' : (prop === 'fontStyle' ? 'normal' : 'none'))
+  const propName = `range${prop.charAt(0).toUpperCase() + prop.slice(1)}`;
+  if (store.config.name[propName] === value) {
+    store.config.name[propName] = (prop === 'textDecoration' ? 'none' : 'normal');
   } else {
-    store.config.name[`range${prop.charAt(0).toUpperCase()+prop.slice(1)}`] = value
+    store.config.name[propName] = value;
   }
 }
 
@@ -215,4 +222,4 @@ watch(() => store.config.name.gradient, (val) => {
 });
 </script>
 
-<style src="./NameSettings.module.css"></style> 
+<style src="./GlobalSettings.module.css" scoped></style> 

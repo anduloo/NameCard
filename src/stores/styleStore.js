@@ -173,9 +173,14 @@ export const useStyleStore = defineStore('style', () => {
     config.value = newConfig;
   }
 
-  function resetToDefault() {
-    config.value = JSON.parse(JSON.stringify(defaultConfig));
+  function setConfig(newConfig) {
+    // Use structuredClone for a deep copy to ensure reactivity
+    config.value = structuredClone(newConfig);
   }
 
-  return { config, applyTemplate, resetToDefault }
+  function resetToDefault() {
+    config.value = structuredClone(defaultConfig);
+  }
+
+  return { config, applyTemplate, setConfig, resetToDefault }
 }) 
