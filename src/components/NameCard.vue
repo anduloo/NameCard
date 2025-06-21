@@ -50,11 +50,15 @@
           <text :x="layout.text.x" :y="layout.text.y" :font-family="layout.text.fontFamily" :font-size="layout.text.fontSize" :font-weight="layout.text.fontWeight" :font-style="layout.text.fontStyle" :text-decoration="layout.text.textDecoration" :fill="layout.text.textColor" :stroke="layout.text.stroke" :stroke-width="layout.text.strokeWidth" :filter="layout.text.filter" :text-anchor="layout.text.textAnchor" :dominant-baseline="layout.text.dominantBaseline" :writing-mode="layout.text.writingMode === 'vertical-rl' ? 'upright' : ''">
             <template v-if="layout.text.ranges && layout.text.ranges.length > 0">
               <tspan v-for="(span, i) in layout.text.ranges" :key="i" :font-size="span.fontSize" :font-weight="span.fontWeight" :font-style="span.fontStyle" :text-decoration="span.textDecoration" :dy="span.dy || 0">{{ span.text }}</tspan>
-                </template>
-                <template v-else>
-              {{ layout.text.content }}
-                </template>
-              </text>
+            </template>
+            <template v-else>
+              <!-- 处理换行符 -->
+              <template v-for="(line, lineIndex) in getMultilineText(layout.text.content)" :key="lineIndex">
+                <tspan v-if="lineIndex > 0" :x="layout.text.x" :dy="layout.text.lineHeight">{{ line }}</tspan>
+                <tspan v-else :dy="0">{{ line }}</tspan>
+              </template>
+            </template>
+          </text>
         </g>
         
         <!-- Global Border -->
@@ -162,9 +166,37 @@ const layouts = computed(() => {
       const hasActiveRange = config.rangeStart > 0 && config.rangeEnd > 0 && config.rangeEnd > config.rangeStart
       const rangeFontSize = hasActiveRange ? (config.rangeFontSize || mainFontSize) : mainFontSize
       const maxFontSizeInRow = Math.max(mainFontSize, rangeFontSize)
-      const rowHeight = maxFontSizeInRow * 1.2 + TEXT_PADDING_BOTTOM + (borderConfig.width || 0)
       
-      const textY = currentY + rowHeight - TEXT_PADDING_BOTTOM - (maxFontSizeInRow / 2) + (config.offsetY || 0) + 6;
+      // 计算多行文本的高度
+      const textContent = props.data[col] || ''
+      const lines = getMultilineText(textContent)
+      const lineCount = lines.length
+      
+      // 根据是否有换行来决定行高和边距
+      let lineHeight, padding, rowHeight
+      
+      if (lineCount > 1) {
+        // 有换行时，使用更大的行高和边距
+        lineHeight = maxFontSizeInRow * 1.5
+        padding = 20
+        const totalTextHeight = lineCount * lineHeight
+        rowHeight = Math.max(totalTextHeight + padding, maxFontSizeInRow * 1.5 + padding) + (borderConfig.width || 0)
+      } else {
+        // 单行文本，使用原有的紧凑行高和边距
+        lineHeight = maxFontSizeInRow * 1.2
+        padding = 12
+        rowHeight = Math.max(lineHeight + padding, maxFontSizeInRow * 1.2 + padding) + (borderConfig.width || 0)
+      }
+      
+      // 修复文本垂直定位：根据是否有换行来决定定位方式
+      let textY
+      if (lineCount > 1) {
+        // 多行文本：定位在背景矩形的上部，更靠近上一行
+        textY = currentY + (lineHeight / 2) + (config.offsetY || 0) + 10
+      } else {
+        // 单行文本：定位在背景矩形的中间
+        textY = currentY + (rowHeight / 2) + (config.offsetY || 0)
+      }
 
       const rectWidth = width.value * ((config.length || 100) / 100)
       
@@ -198,8 +230,9 @@ const layouts = computed(() => {
           x: textX,
           y: textY,
           textAnchor,
-          dominantBaseline: 'middle', 
-          maxFontSizeInRow: maxFontSizeInRow 
+          dominantBaseline: 'middle',
+          maxFontSizeInRow: maxFontSizeInRow,
+          lineHeight: lineHeight // 添加行高信息
         },
         border: { ...borderConfig },
       }
@@ -542,6 +575,12 @@ function getBorderPath(side, layout) {
   return ''
 }
 
+// --- 换行处理工具函数 ---
+function getMultilineText(text) {
+  if (!text) return ['']
+  // 处理各种换行符：\r\n, \r, \n
+  return text.toString().split(/\r?\n/)
+}
 
 function getLinearGradientPos(angle) {
   const rad = (angle % 360) * Math.PI / 180

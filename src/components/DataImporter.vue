@@ -125,7 +125,13 @@ function processFile(file) {
       const workbook = XLSX.read(data, { type: 'array' })
       const sheetName = workbook.SheetNames[0]
       const worksheet = workbook.Sheets[sheetName]
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
+      
+      // 使用自定义解析选项，确保保留换行符
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
+        header: 1,
+        raw: false, // 保持原始字符串格式，不转换为数字
+        defval: '' // 空单元格的默认值
+      })
       
       if (jsonData.length > 0) {
         table.value = jsonData
