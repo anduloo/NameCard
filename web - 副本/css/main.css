@@ -1,0 +1,142 @@
+:root {
+    --primary-color: #409eff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --border-color: #e5e7eb;
+    --section-bg: #f8f9fa;
+    --card-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    --spacing-sm: 4px;
+    --spacing-md: 8px;
+    --spacing-lg: 16px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft YaHei', sans-serif;
+    line-height: 1.5;
+    color: #333;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 15px;
+    position: relative;
+}
+
+/* UTF-8字符支持 */
+body, input, select, button, div, span, p {
+    font-family: "微软雅黑", "Microsoft YaHei", "SimHei", "STHeiti", sans-serif;
+}
+
+/* 容器样式 */
+#container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+}
+
+/* 容器模式样式 */
+#container.dark-mode {
+    background-color: #e0e0e0;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+#container.light-mode {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* 重设布局容器为垂直纵向 */
+.config-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 20px;
+    max-width: 1600px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* 数据导入区样式 */
+.data-import-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 0;
+    flex-wrap: wrap;
+    max-width: 1600px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.data-import-container label {
+    font-weight: 500;
+    white-space: nowrap;
+    margin-right: 0;
+}
+
+/* 数据预览区样式 */
+.data-preview-section {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: white;
+    overflow: hidden;
+    margin-bottom: 20px;
+    max-width: 1600px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: var(--card-shadow);
+}
+
+.data-preview-header {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    font-weight: 500;
+    background: var(--section-bg);
+}
+
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.preview-table th, .preview-table td {
+    padding: 8px 12px;
+    border: 1px solid #eee;
+    text-align: left;
+}
+
+.preview-table th {
+    background: #f5f5f5;
+    font-weight: 500;
+}
+
+.name-line, .number-line, .name-text, .unit-line {
+    word-break: break-all;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 添加渐变流动动画 */
+@keyframes gradientFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+} 

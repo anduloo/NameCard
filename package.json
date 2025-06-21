@@ -1,0 +1,24 @@
+{
+    "name": "namecard-refactored",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@simonwep/pickr": "^1.9.1",
+        "canvg": "^4.0.3",
+        "dom-to-image-more": "^2.16.0",
+        "html2canvas": "^1.4.1",
+        "pinia": "^2.1.6",
+        "vue": "^3.3.4",
+        "xlsx": "^0.18.5"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-vue": "^4.2.3",
+        "vite": "^4.4.5"
+    }
+}

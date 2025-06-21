@@ -1,0 +1,205 @@
+/* 姓名卡片基础样式 */
+.name-card {
+    display: inline-block;
+    margin: 10px;
+    padding: 20px;
+    min-width: 300px;
+    transition: all 0.3s;
+}
+
+.name-line {
+    position: relative;
+    z-index: 1;
+    margin-bottom: var(--line-gap, 0px);
+    padding: 0;
+    display: block;
+    width: 100%;
+}
+
+/* 水平模式样式 */
+.horizontal-mode {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    padding: 5px;
+}
+
+.horizontal-mode .name-line {
+    width: 100%;
+    padding: 5px;
+    margin: 0;
+    text-align: inherit;
+}
+
+/* 竖排模式样式 - 优化对齐和高度自适应 */
+.vertical-mode {
+    min-width: auto !important;
+    display: inline-flex !important;
+    flex-direction: row !important;
+    width: fit-content !important;
+    height: auto !important; /* 允许高度自适应 */
+    max-height: none !important;
+    align-items: flex-start !important; /* 从顶部开始对齐 */
+    max-width: max-content !important;
+    box-sizing: border-box !important;
+    padding: 5px;
+}
+
+/* RTL排序样式优化 */
+.vertical-mode[data-column-order="rtl"] {
+    flex-direction: row-reverse !important;
+}
+
+/* 优化竖排模式列样式 */
+.vertical-mode .name-line {
+    width: auto !important;
+    height: auto !important; /* 允许自然高度 */
+    min-height: auto !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 5px !important;
+    max-width: 2.5em !important;
+    min-width: 1em !important;
+    overflow-wrap: break-word !important;
+    word-break: break-all !important;
+    box-sizing: border-box !important; /* 更改为border-box确保padding包含在宽度内 */
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    display: inline-flex !important;
+    flex-direction: column !important;
+    justify-content: center !important; /* 默认垂直居中 */
+    align-items: center !important; /* 默认水平居中 */
+}
+
+/* 控制竖排模式下水平对齐 */
+.vertical-mode .name-line.text-align-left {
+    align-items: flex-start !important;
+}
+
+.vertical-mode .name-line.text-align-center {
+    align-items: center !important;
+}
+
+.vertical-mode .name-line.text-align-right {
+    align-items: flex-end !important;
+}
+
+/* 控制竖排模式下垂直对齐 */
+.vertical-mode .name-line.vertical-align-top {
+    justify-content: flex-start !important;
+}
+
+.vertical-mode .name-line.vertical-align-middle {
+    justify-content: center !important;
+}
+
+.vertical-mode .name-line.vertical-align-bottom {
+    justify-content: flex-end !important;
+}
+
+/* 控制竖排模式下每个列的精确尺寸 */
+.vertical-mode .number {
+    width: 1.5em !important;
+    max-width: 1.5em !important;
+    flex: 0 0 auto !important;
+}
+
+.vertical-mode .name {
+    width: 2em !important; 
+    max-width: 2em !important;
+    flex: 0 0 auto !important;
+}
+
+.vertical-mode .unit {
+    width: 1.75em !important;
+    max-width: 1.75em !important;
+    flex: 0 0 auto !important;
+}
+
+/* 修复渐变背景在竖排模式下的显示 */
+.vertical-mode .gradient-overlay,
+.vertical-mode .shimmer-effect {
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* 确保竖排模式下的图片和文字都能正确显示 */
+.vertical-mode .name-line img,
+.vertical-mode .number-line img,
+.vertical-mode .unit-line img {
+    max-width: 2em !important;
+    width: auto !important;
+    height: auto !important;
+    display: block !important;
+    margin: 0.25em auto !important;
+}
+
+/* 列排序控制 */
+.column-order-controls {
+    margin-left: 8px;
+    padding-left: 8px;
+    border-left: 1px solid #eee;
+    display: none;
+}
+
+/* 在竖排模式下自动显示列排序按钮 */
+.vertical-mode ~ .column-order-controls {
+    display: flex !important;
+}
+
+/* 文字描边和阴影效果增强 */
+.name-card [style*="webkit-text-stroke"],
+.name-card [style*="text-stroke"] {
+    paint-order: stroke fill;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 保存图片时确保所有元素正确显示 */
+.capturing-image,
+.capturing-image * {
+    transform: none !important;
+    transition: none !important;
+    animation-play-state: paused !important;
+    color-interpolation: sRGB !important;
+    color-interpolation-filters: sRGB !important;
+    color-rendering: optimizeQuality !important;
+    -webkit-font-smoothing: antialiased !important;
+}
+
+.capturing-image .gradient-overlay,
+.capturing-image .shimmer-effect {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* 针对导出时的颜色精度问题 */
+.capturing-image [style*="background"],
+.capturing-image [style*="color"],
+.capturing-image [style*="border"] {
+    transform: translateZ(0) !important;
+    backface-visibility: hidden !important;
+    will-change: auto !important;
+    image-rendering: auto !important;
+}
+
+/* 确保透明度正确应用 */
+.capturing-image [style*="rgba"] {
+    isolation: isolate !important;
+}
+
+/* 确保渐变颜色正确显示 */
+.capturing-image [style*="gradient"] {
+    transform: translateZ(0) !important;
+    backface-visibility: hidden !important;
+    will-change: transform !important;
+}
+
+/* 修复保存图片时的文字效果显示 */
+.capturing-image [style*="webkit-text-stroke"],
+.capturing-image [style*="text-stroke"],
+.capturing-image [style*="text-shadow"] {
+    will-change: text-shadow, -webkit-text-stroke;
+    filter: drop-shadow(0 0 0 transparent);
+} 
