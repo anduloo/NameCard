@@ -1,0 +1,72 @@
+{
+  "name": "test-template",
+  "description": "新模板描述",
+  "config": {
+    "global": {
+      "bgColor": "#ffffff",
+      "border": {
+        "color": "#000000",
+        "width": 1,
+        "style": [
+          "none"
+        ]
+      },
+      "borderRadius": 0,
+      "textAlign": "center"
+    },
+    "name": {
+      "textColor": "#000000",
+      "fontSize": 24,
+      "fontWeight": "normal",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "fontFamily": "Arial, sans-serif",
+      "border": {
+        "color": "#000000",
+        "width": 0,
+        "style": [
+          "none"
+        ]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 50
+    },
+    "number": {
+      "textColor": "#000000",
+      "fontSize": 18,
+      "fontWeight": "normal",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "fontFamily": "Arial, sans-serif",
+      "border": {
+        "color": "#000000",
+        "width": 0,
+        "style": [
+          "none"
+        ]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 30
+    },
+    "unit": {
+      "textColor": "#000000",
+      "fontSize": 16,
+      "fontWeight": "normal",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "fontFamily": "Arial, sans-serif",
+      "border": {
+        "color": "#000000",
+        "width": 0,
+        "style": [
+          "none"
+        ]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 40
+    }
+  }
+}

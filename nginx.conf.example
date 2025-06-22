@@ -1,0 +1,74 @@
+server {
+    listen 80;
+    server_name your-domain.com;
+    root /path/to/your/dist;
+    index index.html;
+
+    # 处理templates目录（支持相对路径）
+    location ~ ^/.*/templates/ {
+        alias /path/to/your/dist/templates/;
+        add_header Content-Type application/json;
+        add_header Access-Control-Allow-Origin "*";
+        add_header Access-Control-Allow-Methods "GET, POST, OPTIONS";
+        add_header Access-Control-Allow-Headers "Content-Type";
+        
+        # 允许目录浏览（调试用）
+        autoindex on;
+        autoindex_exact_size off;
+        autoindex_localtime on;
+    }
+
+    # 处理根目录下的templates
+    location /templates/ {
+        alias /path/to/your/dist/templates/;
+        add_header Content-Type application/json;
+        add_header Access-Control-Allow-Origin "*";
+        add_header Access-Control-Allow-Methods "GET, POST, OPTIONS";
+        add_header Access-Control-Allow-Headers "Content-Type";
+        
+        # 允许目录浏览（调试用）
+        autoindex on;
+        autoindex_exact_size off;
+        autoindex_localtime on;
+    }
+
+    # 处理静态资源（支持相对路径）
+    location ~ ^/.*/assets/ {
+        alias /path/to/your/dist/assets/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # 处理根目录下的assets
+    location /assets/ {
+        alias /path/to/your/dist/assets/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # 处理favicon（支持相对路径）
+    location ~ ^/.*/favicon\.ico$ {
+        alias /path/to/your/dist/favicon.ico;
+    }
+
+    # 处理根目录下的favicon
+    location = /favicon.ico {
+        alias /path/to/your/dist/favicon.ico;
+    }
+
+    # 处理单页应用路由（支持子目录）
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # 设置正确的MIME类型
+    location ~* \.json$ {
+        add_header Content-Type application/json;
+        add_header Access-Control-Allow-Origin "*";
+    }
+
+    # 安全头
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+} 

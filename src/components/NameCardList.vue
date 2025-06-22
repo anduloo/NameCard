@@ -182,8 +182,8 @@ const nameCardRefs = ref([])
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem;
-  background:linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  padding: 0.5rem 1rem;
+  background: var(--secondary-bg);
   color: var(--text-color);
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
@@ -195,11 +195,11 @@ const nameCardRefs = ref([])
 }
 
 .export-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
   border-color: var(--accent-color);
   color: var(--accent-color);
   background: var(--primary-bg);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .export-btn:active {

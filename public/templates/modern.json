@@ -1,0 +1,86 @@
+{
+  "name": "现代渐变",
+  "description": "时尚的渐变色彩设计",
+  "config": {
+    "global": {
+      "bgColor": "#667eea",
+      "gradient": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 12,
+      "textAlign": "center"
+    },
+    "name": {
+      "bgColor": "rgba(255,255,255,0.9)",
+      "textColor": "#2c3e50",
+      "fontFamily": "PingFang SC",
+      "fontSize": 26,
+      "fontWeight": "bold",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 8,
+      "skewAngle": 0,
+      "length": 70,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "rgba(0,0,0,0.1)",
+      "shadowX": 0,
+      "shadowY": 2,
+      "shadowBlur": 8
+    },
+    "number": {
+      "bgColor": "rgba(255,255,255,0.8)",
+      "textColor": "#495057",
+      "fontFamily": "PingFang SC",
+      "fontSize": 20,
+      "fontWeight": "normal",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 6,
+      "skewAngle": 0,
+      "length": 70,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "rgba(0,0,0,0.05)",
+      "shadowX": 0,
+      "shadowY": 1,
+      "shadowBlur": 4
+    },
+    "unit": {
+      "bgColor": "rgba(255,255,255,0.7)",
+      "textColor": "#6c757d",
+      "fontFamily": "PingFang SC",
+      "fontSize": 16,
+      "fontWeight": "normal",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 4,
+      "skewAngle": 0,
+      "length": 70,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "transparent",
+      "shadowX": 0,
+      "shadowY": 0,
+      "shadowBlur": 0
+    }
+  }
+} 

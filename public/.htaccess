@@ -1,0 +1,42 @@
+# Apache服务器配置
+# 确保templates目录可以正确访问（支持相对路径）
+
+# 启用目录浏览（可选，用于调试）
+Options +Indexes
+
+# 设置正确的MIME类型
+<IfModule mod_mime.c>
+    AddType application/json .json
+</IfModule>
+
+# 允许跨域访问（如果需要）
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type"
+</IfModule>
+
+# 处理单页应用路由（支持子目录）
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # 如果请求的不是文件或目录，重定向到index.html
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.html [L]
+</IfModule>
+
+# 缓存控制
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType application/json "access plus 1 hour"
+    ExpiresByType text/html "access plus 0 seconds"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+</IfModule>
+
+# 确保JSON文件可以被正确访问
+<FilesMatch "\.json$">
+    Header set Content-Type "application/json"
+    Header set Access-Control-Allow-Origin "*"
+</FilesMatch> 

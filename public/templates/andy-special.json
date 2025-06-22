@@ -1,0 +1,86 @@
+{
+  "name": "Andy专用",
+  "description": "Andy的定制化专属设计",
+  "config": {
+    "global": {
+      "bgColor": "transparent",
+      "gradient": "none",
+      "border": {
+        "color": "#cccccc",
+        "width": 0.5,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "textAlign": "center"
+    },
+    "name": {
+      "bgColor": "transparent",
+      "textColor": "#ffffff",
+      "fontFamily": "微软雅黑",
+      "fontSize": 28,
+      "fontWeight": "900",
+      "fontStyle": "bold",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 100,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "#222222",
+      "shadowX": 0,
+      "shadowY": 1,
+      "shadowBlur": 1
+    },
+    "number": {
+      "bgColor": "transparent",
+      "textColor": "#ffffff",
+      "fontFamily": "微软雅黑",
+      "fontSize": 22,
+      "fontWeight": "500",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 5,
+      "length": 90,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "#222222",
+      "shadowX": 0,
+      "shadowY": 1,
+      "shadowBlur": 1
+    },
+    "unit": {
+      "bgColor": "transparent",
+      "textColor": "#ffffff",
+      "fontFamily": "微软雅黑",
+      "fontSize": 16,
+      "fontWeight": "300",
+      "fontStyle": "normal",
+      "textDecoration": "none",
+      "border": {
+        "color": "transparent",
+        "width": 0,
+        "style": ["none"]
+      },
+      "borderRadius": 0,
+      "skewAngle": 0,
+      "length": 90,
+      "strokeColor": "transparent",
+      "strokeWidth": 0,
+      "shadowColor": "#222222",
+      "shadowX": 0,
+      "shadowY": 1,
+      "shadowBlur": 1
+    }
+  }
+} 

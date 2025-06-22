@@ -6,7 +6,11 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "templates:list": "node scripts/manage-templates.js list",
+        "templates:validate": "node scripts/manage-templates.js validate",
+        "templates:create": "node scripts/manage-templates.js create",
+        "templates:update-list": "node scripts/update-template-list.js update"
     },
     "dependencies": {
         "@simonwep/pickr": "^1.9.1",
