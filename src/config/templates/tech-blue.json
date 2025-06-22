@@ -4,7 +4,7 @@
   "config": {
     "global": {
       "bgColor": "#0d1a26",
-      "gradient": "linear-gradient(135deg, #0d1a26 0%, #1a2b3c 100%)",
+      "gradient": "none",
       "border": {
         "color": "#00aaff",
         "width": 1,

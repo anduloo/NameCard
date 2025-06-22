@@ -6,7 +6,7 @@ export const useStyleStore = defineStore('style', () => {
   const defaultConfig = {
     global: {
       backgroundType: 'color', // color, gradient, pattern
-      bgColor: '#ffffff',
+      bgColor: 'transparent',
       gradient: 'none',
       gradientStartColor: '#37474f',
       gradientEndColor: '#263238',

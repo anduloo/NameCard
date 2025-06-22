@@ -90,6 +90,13 @@ import { watch } from 'vue'
 
 const store = useStyleStore()
 
+watch(() => store.config.global.bgColor, (newColor) => {
+  if (newColor) {
+    store.config.global.backgroundType = 'color';
+    store.config.global.gradient = 'none';
+  }
+});
+
 function toggleBorder(side) {
   const arr = store.config.global.border.style
   if (side === 'all' || side === 'none') {

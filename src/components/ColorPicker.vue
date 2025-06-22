@@ -42,8 +42,15 @@ onMounted(() => {
   })
 
   pickrInstance.on('save', (color) => {
-    emit('update:modelValue', color.toRGBA().toString())
-    pickrInstance.hide()
+    const rgbaArr = color.toRGBA();
+    if (rgbaArr && rgbaArr.length === 4) {
+      const [r, g, b, a] = rgbaArr;
+      const rgbaStr = `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a})`;
+      emit('update:modelValue', rgbaStr);
+    } else {
+      emit('update:modelValue', color.toRGBA().toString());
+    }
+    pickrInstance.hide();
   })
 })
 

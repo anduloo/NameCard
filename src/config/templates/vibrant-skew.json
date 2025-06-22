@@ -3,7 +3,7 @@
   "description": "大胆的色彩和倾斜的几何形状",
   "config": {
     "global": {
-      "bgColor": "#ffde03",
+      "bgColor": "transparent",
       "gradient": "none",
       "border": {
         "color": "transparent",
