@@ -294,7 +294,8 @@ const layouts = computed(() => {
           x: colCenterX + (config.offsetX || 0),
           y: colCenterY + (config.offsetY || 0),
           content: props.data[col] || '',
-          lineHeight: lineHeight
+          lineHeight: lineHeight,
+          fontFamily: config.fontFamily || 'sans-serif',
         },
         border: { ...borderConfig },
       }
@@ -357,6 +358,7 @@ const layouts = computed(() => {
       stroke: (config.strokeWidth > 0) ? config.strokeColor : 'none',
       strokeWidth: config.strokeWidth || 0,
       filter: (config.shadowBlur > 0 || config.shadowX !== 0 || config.shadowY !== 0) ? `url(#shadow-${col})` : 'none',
+      fontFamily: config.fontFamily || 'sans-serif',
     })
     
     // Rich Text Ranges
