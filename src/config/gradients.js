@@ -133,7 +133,7 @@ export const gradients = {
   'metallic-silver': {
     name: '石墨灰',
     type: 'linear',
-    angle: 60,
-    colors: ['#606c88', '#3f4c6b']
+    angle: 20,
+    colors: ['#606c88','#182424','#3f4c6b']
   },
 }; 

@@ -25,9 +25,6 @@
           <div :class="styles.configActions">
             <span :class="styles.dataInfo">{{ table.length - 1 }} 行数据</span>
             <button @click="showModal = true" :class="styles.previewBtn">
-              <svg class="btn-icon" aria-hidden="true">
-                <use xlink:href="#icon-eye"></use>
-              </svg>
               预览数据
             </button>
           </div>

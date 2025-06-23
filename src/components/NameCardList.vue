@@ -8,9 +8,6 @@
         </div>
         <div class="toolbar-right">
           <button @click="handleBatchExport" class="export-btn">
-            <svg class="btn-icon" aria-hidden="true">
-              <use xlink:href="#icon-download"></use>
-            </svg>
             批量导出
           </button>
         </div>

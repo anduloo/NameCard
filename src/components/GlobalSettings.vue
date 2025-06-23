@@ -18,12 +18,10 @@
           <ColorPicker v-model="store.config.global.gradientStartColor" />
           <ColorPicker v-model="store.config.global.gradientEndColor" />
         </div>
-        <span :class="styles.divider"></span>
         <div :class="styles.controlItem">
-          <label>布局方向</label>
-          <select v-model="store.config.direction">
-            <option value="horizontal">水平</option>
-            <option value="vertical">垂直</option>
+          <select v-model="store.config.global.pattern">
+            <option value="none">无纹理</option>
+            <option v-for="(pattern, key) in patterns" :key="key" :value="key">{{ pattern.name }}</option>
           </select>
         </div>
       </div>
@@ -65,7 +63,7 @@
         </div>
         <span :class="styles.divider"></span>
         <div :class="styles.controlItem">
-          <label>文字对齐</label>
+          <label>对齐</label>
           <button :class="[styles.iconBtn, { [styles.active]: store.config.global.textAlign === 'left' }]" @click="store.config.global.textAlign = 'left'">
             <svg class="iconfont" aria-hidden="true"><use :xlink:href="'#icon-align-left'"></use></svg>
           </button>
@@ -76,6 +74,14 @@
             <svg class="iconfont" aria-hidden="true"><use :xlink:href="'#icon-align-right'"></use></svg>
           </button>
         </div>
+         <span :class="styles.divider"></span>
+        <div :class="styles.controlItem">
+          <label>方向</label>
+          <select v-model="store.config.direction">
+            <option value="horizontal">水平</option>
+            <option value="vertical">垂直</option>
+          </select>
+        </div>
       </div>
     </div>
   </div>
@@ -85,6 +91,7 @@
 import { useStyleStore } from '@/stores/styleStore'
 import ColorPicker from './ColorPicker.vue'
 import { gradients } from '@/config/gradients'
+import { patterns } from '@/config/patterns'
 import styles from './GlobalSettings.module.css'
 import { watch } from 'vue'
 

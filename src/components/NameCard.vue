@@ -17,7 +17,7 @@
             <radialGradient v-else-if="item.type === 'radialGradient'" :id="item.id" cx="50%" cy="50%" r="50%">
               <stop v-for="(color, i) in item.colors" :key="i" :offset="(i / (item.colors.length - 1)) * 100 + '%'" :stop-color="color" />
             </radialGradient>
-            <pattern v-else-if="item.type === 'pattern' && item.svg" :id="item.id" patternUnits="userSpaceOnUse" width="20" height="20">
+            <pattern v-else-if="item.type === 'pattern' && item.svg" :id="item.id" patternUnits="userSpaceOnUse" :width="item.width" :height="item.height">
               <g v-html="item.svg" />
             </pattern>
             <filter v-else-if="item.type === 'filter'" :id="item.id" x="-50%" y="-50%" width="200%" height="200%">
@@ -413,10 +413,10 @@ const defsItems = computed(() => {
         items.push({ type: `${gradType}Gradient`, id: `gradient-${id}`, colors, angle: (gradientCfg && gradientCfg.angle) || 135 })
       }
     }
-    // Pattern
-    if (config.backgroundType === 'pattern') {
+    // Pattern - Now independent of backgroundType
+    if (config.pattern && config.pattern !== 'none') {
       const patternCfg = patterns[config.pattern]
-      if (patternCfg) items.push({ type: 'pattern', id: `pattern-${id}`, svg: patternCfg.svg })
+      if (patternCfg) items.push({ type: 'pattern', id: `pattern-${id}`, ...patternCfg })
     }
     // Shadow (only for columns)
     if (id !== 'global' && (config.shadowBlur > 0 || config.shadowX !== 0 || config.shadowY !== 0)) {
@@ -428,16 +428,21 @@ const defsItems = computed(() => {
 
 const globalPatternId = computed(() => 'pattern-global')
 const globalPatternSvg = computed(() => {
-    const p = globalConfig.value ? patterns[globalConfig.value.pattern] : null
-    return globalConfig.value && globalConfig.value.backgroundType === 'pattern' && p ? p.svg : null
+    if (!globalConfig.value || !globalConfig.value.pattern || globalConfig.value.pattern === 'none') {
+      return null
+    }
+    const p = patterns[globalConfig.value.pattern]
+    return p ? p.svg : null
 })
 
 const globalBgFill = computed(() => {
-  if (!globalConfig.value) return '#ffffff'
-  if (globalConfig.value.backgroundType === 'color') return globalConfig.value.bgColor || '#ffffff'
-  if (globalConfig.value.backgroundType === 'gradient') return `url(#gradient-global)`
-  if (globalConfig.value.backgroundType === 'pattern') return globalConfig.value.bgColor || '#ffffff'
-  return '#ffffff'
+  if (!globalConfig.value) return 'transparent'
+  // If gradient is selected, use it
+  if (globalConfig.value.backgroundType === 'gradient' && globalConfig.value.gradient !== 'none') {
+    return `url(#gradient-global)`
+  }
+  // Otherwise, always use the solid background color (even if a pattern is overlaid)
+  return globalConfig.value.bgColor || 'transparent'
 })
 
 
