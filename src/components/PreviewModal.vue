@@ -8,10 +8,7 @@
           </svg>
           数据预览
         </h3>
-        <button class="close-btn" @click="$emit('close')" title="关闭">
-          <svg class="close-icon" aria-hidden="true">
-            <use xlink:href="#icon-close"></use>
-          </svg>
+        <button class="close-btn" @click="$emit('close')" title="关闭">x
         </button>
       </div>
       

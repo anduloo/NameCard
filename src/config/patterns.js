@@ -107,4 +107,12 @@ export const patterns = {
     width: 100,
     height: 30,
   },
+  'custom-image': {
+    name: '自定义图片',
+    type: 'image',
+    image: null,
+    width: 200,
+    height: 200,
+    opacity: 0.3
+  }
 }; 

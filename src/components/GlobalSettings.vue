@@ -24,6 +24,10 @@
             <option v-for="(pattern, key) in patterns" :key="key" :value="key">{{ pattern.name }}</option>
           </select>
         </div>
+        
+        <div v-if="store.config.global.pattern === 'custom-image'" :class="styles.controlItem">
+          <WatermarkUploader v-model:watermark="customWatermark" />
+        </div>
       </div>
       <!-- 边框设置 -->
       <div :class="styles.toolbarSection">
@@ -93,9 +97,11 @@ import ColorPicker from './ColorPicker.vue'
 import { gradients } from '@/config/gradients'
 import { patterns } from '@/config/patterns'
 import styles from './GlobalSettings.module.css'
-import { watch } from 'vue'
+import { watch, ref } from 'vue'
+import WatermarkUploader from './WatermarkUploader.vue'
 
 const store = useStyleStore()
+const customWatermark = ref(null)
 
 watch(() => store.config.global.bgColor, (newColor) => {
   if (newColor) {
@@ -130,6 +136,27 @@ watch(() => store.config.global.gradient, (val) => {
     store.config.global.backgroundType = 'color';
   }
 });
+
+// 监听自定义水印的变化
+watch(customWatermark, (newValue) => {
+  if (newValue) {
+    patterns['custom-image'].image = newValue.image
+    patterns['custom-image'].opacity = newValue.opacity
+    // 强制更新全局配置以触发重新渲染
+    store.config.global = { ...store.config.global }
+  }
+}, { deep: true })
+
+// 监听暗纹变化
+watch(() => store.config.global.pattern, (newPattern) => {
+  if (newPattern === 'custom-image' && !patterns['custom-image'].image && customWatermark.value) {
+    // 如果选择了自定义图片但还没有设置图片，使用已上传的图片
+    patterns['custom-image'].image = customWatermark.value.image
+    patterns['custom-image'].opacity = customWatermark.value.opacity
+    // 强制更新全局配置以触发重新渲染
+    store.config.global = { ...store.config.global }
+  }
+})
 
 </script>
 <style src="./GlobalSettings.module.css"></style>

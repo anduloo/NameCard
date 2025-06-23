@@ -17,8 +17,15 @@
             <radialGradient v-else-if="item.type === 'radialGradient'" :id="item.id" cx="50%" cy="50%" r="50%">
               <stop v-for="(color, i) in item.colors" :key="i" :offset="(i / (item.colors.length - 1)) * 100 + '%'" :stop-color="color" />
             </radialGradient>
-            <pattern v-else-if="item.type === 'pattern' && item.svg" :id="item.id" patternUnits="userSpaceOnUse" :width="item.width" :height="item.height">
-              <g v-html="item.svg" />
+            <pattern v-else-if="item.type === 'pattern'" :id="item.id" patternUnits="userSpaceOnUse" :width="item.width" :height="item.height">
+              <g v-if="item.svg" v-html="item.svg" />
+              <image v-else-if="item.imageType === 'image' && item.image" 
+                :href="item.image" 
+                :width="item.width" 
+                :height="item.height" 
+                :opacity="item.opacity || 1"
+                preserveAspectRatio="xMidYMid slice"
+              />
             </pattern>
             <filter v-else-if="item.type === 'filter'" :id="item.id" x="-50%" y="-50%" width="200%" height="200%">
               <feDropShadow :dx="item.shadowX" :dy="item.shadowY" :stdDeviation="item.shadowBlur" :flood-color="item.shadowColor" flood-opacity="1" />
@@ -28,7 +35,7 @@
 
         <!-- Global Background -->
         <rect :x="0" :y="0" :width="width" :height="height" :rx="globalConfig.borderRadius || 0" :fill="globalBgFill" />
-        <rect v-if="globalPatternSvg" :x="0" :y="0" :width="width" :height="height" :rx="globalConfig.borderRadius || 0" :fill="`url(#${globalPatternId})`" fill-opacity="0.5" />
+        <rect v-if="globalPatternConfig" :x="0" :y="0" :width="width" :height="height" :rx="globalConfig.borderRadius || 0" :fill="`url(#pattern-global)`" fill-opacity="0.5" />
 
         <!-- Columns Rendering -->
         <g v-for="layout in layouts" :key="layout.col" :transform="layout.groupTransform">
@@ -316,8 +323,16 @@ const layouts = computed(() => {
         layout.rect.gradientFill = `url(#gradient-${col})`
     }
     const patternCfg = patterns[config.pattern]
-    if (config.backgroundType === 'pattern' && patternCfg && patternCfg.svg) {
+    if (config.pattern && config.pattern !== 'none') {
+      if (patternCfg) {
+        const patternItem = { type: 'pattern', id: `pattern-${col}`, ...patternCfg }
+        if (patternCfg.type === 'image') {
+          patternItem.type = 'pattern'
+          patternItem.imageType = 'image'
+        }
         layout.rect.patternFill = `url(#pattern-${col})`
+        items.push(patternItem)
+      }
     }
     
     // Text Anchor & Vertical Alignment
@@ -415,11 +430,20 @@ const defsItems = computed(() => {
         items.push({ type: `${gradType}Gradient`, id: `gradient-${id}`, colors, angle: (gradientCfg && gradientCfg.angle) || 135 })
       }
     }
-    // Pattern - Now independent of backgroundType
+    
+    // Pattern
     if (config.pattern && config.pattern !== 'none') {
       const patternCfg = patterns[config.pattern]
-      if (patternCfg) items.push({ type: 'pattern', id: `pattern-${id}`, ...patternCfg })
+      if (patternCfg) {
+        const patternItem = { type: 'pattern', id: `pattern-${id}`, ...patternCfg }
+        if (patternCfg.type === 'image') {
+          patternItem.type = 'pattern'
+          patternItem.imageType = 'image'
+        }
+        items.push(patternItem)
+      }
     }
+    
     // Shadow (only for columns)
     if (id !== 'global' && (config.shadowBlur > 0 || config.shadowX !== 0 || config.shadowY !== 0)) {
       items.push({ type: 'filter', id: `shadow-${id}`, ...config })
@@ -434,7 +458,14 @@ const globalPatternSvg = computed(() => {
       return null
     }
     const p = patterns[globalConfig.value.pattern]
-    return p ? p.svg : null
+    return p && !p.type ? p.svg : null
+})
+
+const globalPatternConfig = computed(() => {
+    if (!globalConfig.value || !globalConfig.value.pattern || globalConfig.value.pattern === 'none') {
+      return null
+    }
+    return patterns[globalConfig.value.pattern]
 })
 
 const globalBgFill = computed(() => {
