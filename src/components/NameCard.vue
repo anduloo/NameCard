@@ -38,78 +38,79 @@
           </template>
         </defs>
 
-        <!-- Global Background -->
-        <rect :x="0" :y="0" :width="width" :height="height" :rx="globalConfig.borderRadius || 0" :fill="globalBgFill" />
-        <image
-          v-if="globalPatternConfig && globalPatternConfig.type === 'image' && (globalPatternConfig.mode === 'tile' || globalPatternConfig.mode === 'cover') && globalPatternConfig.image"
-          :x="0" :y="0"
-          :width="width"
-          :height="height"
-          :href="globalPatternConfig.image"
-          :opacity="globalPatternConfig.opacity || 1"
-          :preserveAspectRatio="globalPatternConfig.mode === 'cover' ? 'xMidYMid slice' : 'none'"
-          :clip-path="'url(#clip-global-bg)'"
-        />
-        <rect
-          v-if="globalPatternConfig && globalPatternConfig.type === 'image' && globalPatternConfig.mode === 'repeat' && globalPatternConfig.image"
-          :x="0" :y="0" :width="width" :height="height" :rx="globalConfig.borderRadius || 0"
-          :fill="`url(#pattern-global)`"
-          :opacity="globalPatternConfig.opacity || 1"
-        />
-        <rect
-          v-else-if="globalPatternConfig && globalPatternConfig.type !== 'image'"
-          :x="0" :y="0" :width="width" :height="height" :rx="globalConfig.borderRadius || 0"
-          :fill="`url(#pattern-global)`"
-          fill-opacity="0.5"
-        />
+        <g :clip-path="globalConfig.borderRadius > 0 ? 'url(#clip-global-bg)' : undefined">
+          <!-- Global Background -->
+          <rect :x="0" :y="0" :width="width" :height="height" :rx="globalConfig.borderRadius || 0" :fill="globalBgFill" />
+          <image
+            v-if="globalPatternConfig && globalPatternConfig.type === 'image' && (globalPatternConfig.mode === 'tile' || globalPatternConfig.mode === 'cover') && globalPatternConfig.image"
+            :x="0" :y="0"
+            :width="width"
+            :height="height"
+            :href="globalPatternConfig.image"
+            :opacity="globalPatternConfig.opacity || 1"
+            :preserveAspectRatio="globalPatternConfig.mode === 'cover' ? 'xMidYMid slice' : 'none'"
+          />
+          <rect
+            v-if="globalPatternConfig && globalPatternConfig.type === 'image' && globalPatternConfig.mode === 'repeat' && globalPatternConfig.image"
+            :x="0" :y="0" :width="width" :height="height" :rx="globalConfig.borderRadius || 0"
+            :fill="`url(#pattern-global)`"
+            :opacity="globalPatternConfig.opacity || 1"
+          />
+          <rect
+            v-else-if="globalPatternConfig && globalPatternConfig.type !== 'image'"
+            :x="0" :y="0" :width="width" :height="height" :rx="globalConfig.borderRadius || 0"
+            :fill="`url(#pattern-global)`"
+            fill-opacity="0.5"
+          />
 
-        <!-- Columns Rendering -->
-        <g v-for="layout in layouts" :key="layout.col" :transform="layout.groupTransform">
-          <!-- Background and Border (Skewed) -->
-          <g :transform="layout.skewTransform">
-            <rect :x="layout.rect.x" :y="layout.rect.y" :width="layout.rect.width" :height="layout.rect.height" :rx="layout.rect.rx" :fill="layout.rect.fill" />
-            <rect v-if="layout.rect.gradientFill" :x="layout.rect.x" :y="layout.rect.y" :width="layout.rect.width" :height="layout.rect.height" :rx="layout.rect.rx" :fill="layout.rect.gradientFill" fill-opacity="0.7" />
-            <rect v-if="layout.rect.patternFill" :x="layout.rect.x" :y="layout.rect.y" :width="layout.rect.width" :height="layout.rect.height" :rx="layout.rect.rx" :fill="layout.rect.patternFill" fill-opacity="0.5" />
-            
-            <g v-if="layout.border.width > 0 && layout.border.style && layout.border.style.length > 0 && !layout.border.style.includes('none')">
-              <rect v-if="layout.border.style.includes('all')" :x="layout.rect.x + layout.border.width/2" :y="layout.rect.y + layout.border.width/2" :width="layout.rect.width - layout.border.width" :height="layout.rect.height - layout.border.width" :rx="layout.rect.rx" fill="none" :stroke="layout.border.color" :stroke-width="layout.border.width" />
-                <template v-else>
-                <path v-for="side in layout.border.style" :key="side" :d="getBorderPath(side, layout)" fill="none" :stroke="layout.border.color" :stroke-width="layout.border.width" />
-                </template>
+          <!-- Columns Rendering -->
+          <g v-for="layout in layouts" :key="layout.col" :transform="layout.groupTransform">
+            <!-- Background and Border (Skewed) -->
+            <g :transform="layout.skewTransform">
+              <rect :x="layout.rect.x" :y="layout.rect.y" :width="layout.rect.width" :height="layout.rect.height" :rx="layout.rect.rx" :fill="layout.rect.fill" />
+              <rect v-if="layout.rect.gradientFill" :x="layout.rect.x" :y="layout.rect.y" :width="layout.rect.width" :height="layout.rect.height" :rx="layout.rect.rx" :fill="layout.rect.gradientFill" fill-opacity="0.7" />
+              <rect v-if="layout.rect.patternFill" :x="layout.rect.x" :y="layout.rect.y" :width="layout.rect.width" :height="layout.rect.height" :rx="layout.rect.rx" :fill="layout.rect.patternFill" fill-opacity="0.5" />
+              
+              <g v-if="layout.border.width > 0 && layout.border.style && layout.border.style.length > 0 && !layout.border.style.includes('none')">
+                <rect v-if="layout.border.style.includes('all')" :x="layout.rect.x + layout.border.width/2" :y="layout.rect.y + layout.border.width/2" :width="layout.rect.width - layout.border.width" :height="layout.rect.height - layout.border.width" :rx="layout.rect.rx" fill="none" :stroke="layout.border.color" :stroke-width="layout.border.width" />
+                  <template v-else>
+                  <path v-for="side in layout.border.style" :key="side" :d="getBorderPath(side, layout)" fill="none" :stroke="layout.border.color" :stroke-width="layout.border.width" />
+                  </template>
+              </g>
             </g>
+            
+            <!-- Text (Not Skewed) -->
+            <text :x="layout.text.x" :y="layout.text.y" :font-family="layout.text.fontFamily" :font-size="layout.text.fontSize" :font-weight="layout.text.fontWeight" :font-style="layout.text.fontStyle" :text-decoration="layout.text.textDecoration" :fill="layout.text.textColor" :stroke="layout.text.stroke" :stroke-width="layout.text.strokeWidth" :filter="layout.text.filter" :text-anchor="layout.text.textAnchor" :dominant-baseline="layout.text.dominantBaseline" :writing-mode="layout.text.writingMode">
+              <template v-if="layout.text.ranges && layout.text.ranges.length > 0">
+                <tspan v-for="(span, i) in layout.text.ranges" :key="i" :font-size="span.fontSize" :font-weight="span.fontWeight" :font-style="span.fontStyle" :text-decoration="span.textDecoration" :dy="span.dy || 0">{{ span.text }}</tspan>
+              </template>
+              <template v-else>
+                <!-- Multi-line text handling -->
+                <template v-if="direction === 'horizontal'">
+                  <template v-for="(line, lineIndex) in getMultilineText(layout.text.content)" :key="lineIndex">
+                    <tspan v-if="lineIndex > 0" :x="layout.text.x" :dy="layout.text.lineHeight">{{ line }}</tspan>
+                    <tspan v-else :dy="0">{{ line }}</tspan>
+                  </template>
+                </template>
+                <template v-else> <!-- Vertical layout -->
+                  <template v-for="(line, lineIndex) in getMultilineText(layout.text.content)" :key="lineIndex">
+                    <tspan :x="layout.text.x + ((getMultilineText(layout.text.content).length - 1) / 2 - lineIndex) * layout.text.lineHeight" :y="layout.text.y">{{ line }}</tspan>
+                  </template>
+                </template>
+              </template>
+            </text>
           </g>
           
-          <!-- Text (Not Skewed) -->
-          <text :x="layout.text.x" :y="layout.text.y" :font-family="layout.text.fontFamily" :font-size="layout.text.fontSize" :font-weight="layout.text.fontWeight" :font-style="layout.text.fontStyle" :text-decoration="layout.text.textDecoration" :fill="layout.text.textColor" :stroke="layout.text.stroke" :stroke-width="layout.text.strokeWidth" :filter="layout.text.filter" :text-anchor="layout.text.textAnchor" :dominant-baseline="layout.text.dominantBaseline" :writing-mode="layout.text.writingMode">
-            <template v-if="layout.text.ranges && layout.text.ranges.length > 0">
-              <tspan v-for="(span, i) in layout.text.ranges" :key="i" :font-size="span.fontSize" :font-weight="span.fontWeight" :font-style="span.fontStyle" :text-decoration="span.textDecoration" :dy="span.dy || 0">{{ span.text }}</tspan>
-            </template>
-            <template v-else>
-              <!-- Multi-line text handling -->
-              <template v-if="direction === 'horizontal'">
-                <template v-for="(line, lineIndex) in getMultilineText(layout.text.content)" :key="lineIndex">
-                  <tspan v-if="lineIndex > 0" :x="layout.text.x" :dy="layout.text.lineHeight">{{ line }}</tspan>
-                  <tspan v-else :dy="0">{{ line }}</tspan>
-                </template>
+          <!-- Global Border -->
+          <g v-if="globalConfig.border && !globalConfig.border.style.includes('none') && globalConfig.border.width > 0">
+            <rect v-if="globalConfig.border.style.includes('all')" :x="globalConfig.border.width/2" :y="globalConfig.border.width/2" :width="width - globalConfig.border.width" :height="height - globalConfig.border.width" :rx="globalConfig.borderRadius || 0" fill="none" :stroke="globalConfig.border.color" :stroke-width="globalConfig.border.width" />
+              <template v-else>
+            <line v-if="globalConfig.border.style.includes('top')" :x1="0" :y1="globalConfig.border.width/2" :x2="width" :y2="globalConfig.border.width/2" :stroke="globalConfig.border.color" :stroke-width="globalConfig.border.width" />
+            <line v-if="globalConfig.border.style.includes('bottom')" :x1="0" :y1="height-globalConfig.border.width/2" :x2="width" :y2="height-globalConfig.border.width/2" :stroke="globalConfig.border.color" :stroke-width="globalConfig.border.width" />
+            <line v-if="globalConfig.border.style.includes('left')" :x1="globalConfig.border.width/2" :y1="0" :x2="globalConfig.border.width/2" :y2="height" :stroke="globalConfig.border.color" :stroke-width="globalConfig.border.width" />
+            <line v-if="globalConfig.border.style.includes('right')" :x1="width-globalConfig.border.width/2" :y1="0" :x2="width-globalConfig.border.width/2" :y2="height" :stroke="globalConfig.border.color" :stroke-width="globalConfig.border.width" />
               </template>
-              <template v-else> <!-- Vertical layout -->
-                <template v-for="(line, lineIndex) in getMultilineText(layout.text.content)" :key="lineIndex">
-                  <tspan :x="layout.text.x + ((getMultilineText(layout.text.content).length - 1) / 2 - lineIndex) * layout.text.lineHeight" :y="layout.text.y">{{ line }}</tspan>
-                </template>
-              </template>
-            </template>
-          </text>
-        </g>
-        
-        <!-- Global Border -->
-        <g v-if="globalConfig.border && !globalConfig.border.style.includes('none') && globalConfig.border.width > 0">
-          <rect v-if="globalConfig.border.style.includes('all')" :x="globalConfig.border.width/2" :y="globalConfig.border.width/2" :width="width - globalConfig.border.width" :height="height - globalConfig.border.width" :rx="globalConfig.borderRadius || 0" fill="none" :stroke="globalConfig.border.color" :stroke-width="globalConfig.border.width" />
-            <template v-else>
-          <line v-if="globalConfig.border.style.includes('top')" :x1="0" :y1="globalConfig.border.width/2" :x2="width" :y2="globalConfig.border.width/2" :stroke="globalConfig.border.color" :stroke-width="globalConfig.border.width" />
-          <line v-if="globalConfig.border.style.includes('bottom')" :x1="0" :y1="height-globalConfig.border.width/2" :x2="width" :y2="height-globalConfig.border.width/2" :stroke="globalConfig.border.color" :stroke-width="globalConfig.border.width" />
-          <line v-if="globalConfig.border.style.includes('left')" :x1="globalConfig.border.width/2" :y1="0" :x2="globalConfig.border.width/2" :y2="height" :stroke="globalConfig.border.color" :stroke-width="globalConfig.border.width" />
-          <line v-if="globalConfig.border.style.includes('right')" :x1="width-globalConfig.border.width/2" :y1="0" :x2="width-globalConfig.border.width/2" :y2="height" :stroke="globalConfig.border.color" :stroke-width="globalConfig.border.width" />
-            </template>
+          </g>
         </g>
       </svg>
     </div>
@@ -700,12 +701,6 @@ const exportAsPng = async (fileName = 'namecard.png') => {
     canvas.height = svgHeight * scale;
     const ctx = canvas.getContext('2d');
 
-    // Handle transparent vs. white background
-    if (store.config.global?.bgColor && store.config.global?.bgColor !== 'transparent') {
-        ctx.fillStyle = store.config.global.bgColor;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-    
     const img = new Image();
     img.src = svgDataUrl;
 
