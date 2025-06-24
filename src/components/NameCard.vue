@@ -10,6 +10,9 @@
       >
         <!-- Defs for gradients, patterns, filters -->
         <defs>
+          <clipPath id="clip-global-bg">
+            <rect :x="0" :y="0" :width="width" :height="height" :rx="globalConfig.borderRadius || 0" />
+          </clipPath>
           <template v-for="item in defsItems" :key="item.id">
             <linearGradient v-if="item.type === 'linearGradient'" :id="item.id" v-bind="getLinearGradientPos(item.angle)">
               <stop v-for="(color, i) in item.colors" :key="i" :offset="(i / (item.colors.length - 1)) * 100 + '%'" :stop-color="color" />
@@ -17,14 +20,16 @@
             <radialGradient v-else-if="item.type === 'radialGradient'" :id="item.id" cx="50%" cy="50%" r="50%">
               <stop v-for="(color, i) in item.colors" :key="i" :offset="(i / (item.colors.length - 1)) * 100 + '%'" :stop-color="color" />
             </radialGradient>
-            <pattern v-else-if="item.type === 'pattern'" :id="item.id" patternUnits="userSpaceOnUse" :width="item.width" :height="item.height">
+            <pattern v-else-if="item.type === 'pattern'" :id="item.id" patternUnits="userSpaceOnUse" 
+              :width="item.mode === 'repeat' && item.width ? item.width : item.width" 
+              :height="item.mode === 'repeat' && item.height ? item.height : item.height">
               <g v-if="item.svg" v-html="item.svg" />
               <image v-else-if="item.imageType === 'image' && item.image" 
                 :href="item.image" 
                 :width="item.width" 
                 :height="item.height" 
                 :opacity="item.opacity || 1"
-                preserveAspectRatio="xMidYMid slice"
+                :preserveAspectRatio="item.mode === 'cover' ? 'xMidYMid slice' : 'none'"
               />
             </pattern>
             <filter v-else-if="item.type === 'filter'" :id="item.id" x="-50%" y="-50%" width="200%" height="200%">
@@ -35,7 +40,28 @@
 
         <!-- Global Background -->
         <rect :x="0" :y="0" :width="width" :height="height" :rx="globalConfig.borderRadius || 0" :fill="globalBgFill" />
-        <rect v-if="globalPatternConfig" :x="0" :y="0" :width="width" :height="height" :rx="globalConfig.borderRadius || 0" :fill="`url(#pattern-global)`" fill-opacity="0.5" />
+        <image
+          v-if="globalPatternConfig && globalPatternConfig.type === 'image' && (globalPatternConfig.mode === 'tile' || globalPatternConfig.mode === 'cover') && globalPatternConfig.image"
+          :x="0" :y="0"
+          :width="width"
+          :height="height"
+          :href="globalPatternConfig.image"
+          :opacity="globalPatternConfig.opacity || 1"
+          :preserveAspectRatio="globalPatternConfig.mode === 'cover' ? 'xMidYMid slice' : 'none'"
+          :clip-path="'url(#clip-global-bg)'"
+        />
+        <rect
+          v-if="globalPatternConfig && globalPatternConfig.type === 'image' && globalPatternConfig.mode === 'repeat' && globalPatternConfig.image"
+          :x="0" :y="0" :width="width" :height="height" :rx="globalConfig.borderRadius || 0"
+          :fill="`url(#pattern-global)`"
+          :opacity="globalPatternConfig.opacity || 1"
+        />
+        <rect
+          v-else-if="globalPatternConfig && globalPatternConfig.type !== 'image'"
+          :x="0" :y="0" :width="width" :height="height" :rx="globalConfig.borderRadius || 0"
+          :fill="`url(#pattern-global)`"
+          fill-opacity="0.5"
+        />
 
         <!-- Columns Rendering -->
         <g v-for="layout in layouts" :key="layout.col" :transform="layout.groupTransform">

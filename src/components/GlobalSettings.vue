@@ -142,7 +142,15 @@ watch(customWatermark, (newValue) => {
   if (newValue) {
     patterns['custom-image'].image = newValue.image
     patterns['custom-image'].opacity = newValue.opacity
-    // 强制更新全局配置以触发重新渲染
+    patterns['custom-image'].mode = newValue.mode || 'tile'
+    patterns['custom-image'].width = newValue.width || 200
+    patterns['custom-image'].height = newValue.height || 200
+    store.config.global = { ...store.config.global }
+  } else {
+    patterns['custom-image'].image = null
+    patterns['custom-image'].mode = 'tile'
+    patterns['custom-image'].width = 200
+    patterns['custom-image'].height = 200
     store.config.global = { ...store.config.global }
   }
 }, { deep: true })
