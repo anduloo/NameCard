@@ -5,6 +5,7 @@ import lxgwneoxiheiplus from '../assets/fonts/LXGWNeoXiHeiPlus.woff2';
 import kuaikanshijie from '../assets/fonts/kuaikanshijie.woff2';
 import huxiaobozhenshuai from '../assets/fonts/huxiaobozhenshuai.woff2';
 import smileysansoblique from '../assets/fonts/SmileySans-Oblique.ttf.woff2';
+import AlimamaDongFangDaKai from '../assets/fonts/AlimamaDongFangDaKai-Regular.woff2';
 
 export const standardFonts = [
   { name: '微软雅黑', value: 'Microsoft YaHei, sans-serif' },
@@ -29,6 +30,7 @@ export const customFonts = [
   { name: '快看世界体', value: 'kuaikanshijie', path: kuaikanshijie },
   { name: '胡晓波真帅体', value: 'huxiaobozhenshuai', path: huxiaobozhenshuai },
   { name: '得意黑', value: 'SmileySans-Oblique', path: smileysansoblique },
+  { name: '阿里妈妈东方大楷', value:'AlimamaDongFangDaKai-Regular',path:AlimamaDongFangDaKai },
 ];
 
 export const fonts = [...standardFonts, ...customFonts]; 

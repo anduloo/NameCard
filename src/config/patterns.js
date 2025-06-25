@@ -19,7 +19,7 @@ export const patterns = {
   },
   wave: {
     name: '波浪',
-    svg: "<path d='M0,50 Q25,55 50,50 T100,55 T150,50 T200,55' fill='none' stroke='rgba(216, 216, 216, 0.2)' stroke-width='1'/><path d='M0,60 Q25,70 50,60 T100,60 T150,60 T200,60' fill='none' stroke='rgba(211, 211, 211, 0.38)' stroke-width='1'/><path d='M0,80 Q25,90 50,80 T100,80 T150,80 T200,80' fill='none' stroke='rgba(211, 211, 211, 0.38)' stroke-width='1'/>",
+    svg: "<path d='M0,50 Q25,55 50,50 T100,50 T150,50 T200,55' fill='none' stroke='rgba(216, 216, 216, 0.2)' stroke-width='1'/><path d='M0,60 Q25,70 50,60 T100,60 T150,60 T200,60' fill='none' stroke='rgba(211, 211, 211, 0.38)' stroke-width='1'/><path d='M0,80 Q25,90 50,80 T100,80 T150,80 T200,80' fill='none' stroke='rgba(211, 211, 211, 0.38)' stroke-width='1'/>",
     width: 200,
     height: 200,
   },
@@ -80,8 +80,8 @@ export const patterns = {
   'ICE': {
     name: '冰裂纹',
     svg: '<path d="M0,0 L30,70 L50,20 L70,50 L100,0" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1" stroke-opacity="0.2"/><path d="M0,20 L40,100 L60,40 L80,70 L100,30" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-opacity="0.2"/><path d="M0,50 L20,0 L50,60 L70,10 L100,60" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1" stroke-opacity="0.2"/><path d="M0,80 L10,30 L30,90 L60,30 L100,90" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" s4roke-opacity="0.2"/>',
-    width: 150,
-    height: 150,
+    width: 100,
+    height: 80,
   },
   'Fangge': {
     name: '方格',
