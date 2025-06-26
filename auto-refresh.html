@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网页自动刷新工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-bg: #dbeef757;
+            --secondary-bg: #fff;
+            --accent-color: #2575fc;
+            --border-color: #e0e7ef;
+            --radius: 10px;
+            --shadow-sm: 0 2px 8px rgba(36, 50, 93, 0.07);
+            --shadow-md: 0 8px 24px rgba(36, 50, 93, 0.13);
+            --text-color: #37474f;
+            --text-muted: #b0b8c1;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0fdff 0%, #defaef81 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 8px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: var(--secondary-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #dffff257 0%, #c7f7ec60 100%);
+            color: var(--text-color);
+            padding: 25px 30px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+        
+        .content {
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            background: linear-gradient(135deg, #efe7fd46 0%, #cde0fc42 100%);
+        }
+        
+        @media (min-width: 768px) {
+            .content {
+                flex-direction: row;
+            }
+        }
+        
+        /* 移动设备响应式布局 */
+        @media (max-width: 767px) {
+            .container {
+                max-width: 100%;
+                margin: 10px;
+                border-radius: 8px;
+            }
+            
+            header {
+                display: none; /* 在移动设备上隐藏header */
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            .control-panel {
+                padding: 5px;
+                margin-bottom: 15px;
+            }
+            
+            .preview-panel {
+                padding: 0px 15px;
+            }
+            
+            .form-group {
+                margin-bottom: 15px;
+            }
+            
+            label {
+                font-size: 0.9rem;
+                margin-bottom: 6px;
+            }
+            
+            input, select {
+                padding: 5px;
+                font-size: 0.9rem;
+            }
+            
+            .btn-group {
+                gap: 5px;
+                margin-top: 8px;
+            }
+            
+            button {
+                padding: 5px 0;
+                font-size: 0.9rem;
+                gap: 6px;
+            }
+            
+            .status-panel {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .status-title h2 {
+                font-size: 1.1rem;
+            }
+            
+            .status-content {
+                padding: 12px;
+                min-height: 60px;
+            }
+            
+            .status-item {
+                margin-bottom: 8px;
+                font-size: 0.85rem;
+            }
+            
+            .status-label {
+                min-width: 80px;
+                font-size: 0.85rem;
+            }
+            
+            .iframe-header {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .progress-container {
+                height: 16px;
+                margin-top: 12px;
+            }
+            
+            .counter {
+                margin-top: 8px;
+                font-size: 0.85rem;
+            }
+            
+            .instructions {
+                display: none; /* 在移动设备上隐藏使用说明 */
+            }
+            
+            footer {
+                padding: 15px;
+                font-size: 0.8rem;
+            }
+        }
+        
+        /* 超小屏幕设备 */
+        @media (max-width: 480px) {
+            .container {
+                margin: 5px;
+                border-radius: 8px;
+            }
+            
+            header {
+                padding: 12px 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+                gap: 8px;
+            }
+            
+            .content {
+                padding: 10px;
+            }
+            
+            .control-panel {
+                padding: 12px;
+            }
+            
+            .preview-panel {
+                padding: 0px 12px;
+            }
+            
+            .btn-group {
+                flex-direction: row;
+                gap: 5px;
+            }
+            
+            button {
+                padding: 10px 0;
+                font-size: 0.8rem;
+                gap: 4px;
+            }
+            
+            .status-panel {
+                padding: 12px;
+            }
+            
+            .status-content {
+                padding: 10px;
+            }
+            
+            .iframe-header {
+                padding: 8px 12px;
+            }
+        }
+        
+        .control-panel {
+            flex: 1;
+            padding: 20px;
+            background: var(--secondary-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .preview-panel {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            padding: 0px 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            background: var(--primary-bg);
+            color: var(--text-color);
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--accent-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.08);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px 0;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn-start {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-start:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        
+        .btn-pause {
+            background: var(--accent-color);
+            color: #fff;
+        }
+        
+        .btn-pause:hover {
+            background: #174ea6;
+            color: #fff;
+        }
+        
+        .btn-reset {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-reset:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+        
+        .status-panel {
+            background: var(--secondary-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .status-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            
+        }
+        
+        .status-content {
+            padding: 15px;
+            background: var(--primary-bg);
+            border-radius: var(--radius);
+            min-height: 80px;
+        }
+        
+        .status-item {
+            margin-bottom: 10px;
+            display: flex;
+        }
+        
+        .status-label {
+            font-weight: 600;
+            min-width: 120px;
+            color: var(--accent-color);
+        }
+        
+        .iframe-container {
+            flex: 1;
+            background: var(--secondary-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .iframe-header {
+            background: linear-gradient(135deg, #ddf8ed 0%, #d7ecf7 100%);
+            color: #212529;
+            padding: 12px 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .progress-container {
+            margin-top: 15px;
+            background: #e9ecef;
+            border-radius: var(--radius);
+            height: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .counter {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .instructions {
+            background: #e8f4ff;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 25px;
+            font-size: 0.9rem;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .pulse {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #28a745;
+            box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(0.9);
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 12px rgba(40, 167, 69, 0);
+            }
+            100% {
+                transform: scale(0.9);
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-sync-alt"></i> 网页自动刷新工具</h1>
+            <p class="subtitle">设置URL、刷新间隔和刷新次数，轻松实现自动化刷新</p>
+        </header>
+        
+        <div class="content">
+            <div class="control-panel">
+                <div class="form-group">
+                    <label for="url"><i class="fas fa-globe"></i> 网页地址 (URL)</label>
+                    <input type="text" id="url" placeholder="https://example.com" value="https://example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="interval"><i class="fas fa-clock"></i> 刷新间隔 (秒)</label>
+                    <input type="number" id="interval" min="1" value="5">
+                </div>
+                
+                <div class="form-group">
+                    <label for="times"><i class="fas fa-redo"></i> 刷新次数</label>
+                    <input type="number" id="times" min="1" value="10">
+                </div>
+                
+                <div class="btn-group">
+                    <button id="startBtn" class="btn-start"><i class="fas fa-play"></i> 开始刷新</button>
+                    <button id="pauseBtn" class="btn-pause"><i class="fas fa-pause"></i> 暂停</button>
+                    <button id="resetBtn" class="btn-reset"><i class="fas fa-undo"></i> 重置</button>
+                </div>
+                
+                <div class="instructions">
+                    <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
+                    <ul>
+                        <li>在"网页地址"栏输入需要刷新的URL（包含 http:// 或 https://）</li>
+                        <li>设置刷新间隔（秒）和刷新次数</li>
+                        <li>点击"开始刷新"按钮启动自动化刷新</li>
+                        <li>刷新过程中可随时暂停或重置</li>
+                        <li>状态面板显示当前刷新进度</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="preview-panel">
+                <div class="status-panel">
+                    <div class="status-title">
+                        <i class="fas fa-chart-line"></i>
+                        <h2>刷新状态</h2>
+                        <span id="statusIcon" class="pulse"></span>
+                    </div>
+                    <div class="status-content">
+                        <div class="status-item">
+                            <span class="status-label">当前状态:</span>
+                            <span id="statusText">等待开始</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">刷新进度:</span>
+                            <span id="progressText">0/0</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">下次刷新:</span>
+                            <span id="nextRefresh">--</span>
+                        </div>
+                        
+                        <div class="progress-container">
+                            <div id="progressBar" class="progress-bar"></div>
+                        </div>
+                        <div class="counter">
+                            <span id="counter">0%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="iframe-container">
+                    <div class="iframe-header">
+                        <i class="fas fa-eye"></i>
+                        <span>网页预览</span>
+                    </div>
+                    <iframe id="previewFrame" src="about:blank"></iframe>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2025 网页自动刷新工具 | ANDY</p>
+        </footer>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const urlInput = document.getElementById('url');
+        const intervalInput = document.getElementById('interval');
+        const timesInput = document.getElementById('times');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const previewFrame = document.getElementById('previewFrame');
+        const statusText = document.getElementById('statusText');
+        const progressText = document.getElementById('progressText');
+        const nextRefresh = document.getElementById('nextRefresh');
+        const progressBar = document.getElementById('progressBar');
+        const counter = document.getElementById('counter');
+        const statusIcon = document.getElementById('statusIcon');
+        
+        // 状态变量
+        let refreshInterval = null;
+        let refreshCount = 0;
+        let totalRefreshes = 0;
+        let nextRefreshTime = null;
+        let isPaused = false;
+        
+        // 初始化
+        function init() {
+            updateStatus('等待开始', '#6c757d');
+            updateProgress();
+        }
+        
+        // 开始刷新
+        function startRefresh() {
+            const url = urlInput.value.trim();
+            const interval = parseInt(intervalInput.value) * 1000;
+            totalRefreshes = parseInt(timesInput.value);
+            
+            // 验证输入
+            if (!url) {
+                alert('请输入有效的URL地址');
+                return;
+            }
+            
+            if (isNaN(interval)) {
+                alert('请输入有效的刷新间隔');
+                return;
+            }
+            
+            if (isNaN(totalRefreshes)) {
+                alert('请输入有效的刷新次数');
+                return;
+            }
+            
+            // 重置计数器
+            refreshCount = 0;
+            isPaused = false;
+            pauseBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停';
+            pauseBtn.disabled = false;
+            
+            // 加载初始页面
+            loadPage(url);
+            
+            // 设置刷新定时器
+            refreshInterval = setInterval(() => {
+                if (isPaused) return;
+                refreshCount++;
+                updateProgress(); // 先更新进度
+                if (refreshCount >= totalRefreshes) {
+                    stopRefresh();
+                    updateStatus('刷新完成', '#28a745');
+                    return;
+                }
+                loadPage(url);
+            }, interval);
+            
+            // 更新状态
+            updateStatus('刷新中...', '#2575fc');
+            updateNextRefresh(interval);
+            
+            // 禁用输入
+            urlInput.disabled = true;
+            intervalInput.disabled = true;
+            timesInput.disabled = true;
+        }
+        
+        // 暂停/恢复刷新
+        function togglePause() {
+            if (!refreshInterval) return;
+            isPaused = !isPaused;
+            if (isPaused) {
+                updateStatus('已暂停', '#ffc107');
+                pauseBtn.innerHTML = '<i class="fas fa-play"></i> 恢复';
+            } else {
+                updateStatus('刷新中...', '#2575fc');
+                pauseBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停';
+            }
+        }
+        
+        // 停止刷新（重置暂停状态）
+        function stopRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+            }
+            isPaused = false;
+            pauseBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停';
+            pauseBtn.disabled = true;
+            updateStatus('已停止', '#dc3545');
+            nextRefresh.textContent = '--';
+            
+            // 启用输入
+            urlInput.disabled = false;
+            intervalInput.disabled = false;
+            timesInput.disabled = false;
+        }
+        
+        // 重置
+        function reset() {
+            stopRefresh();
+            refreshCount = 0;
+            totalRefreshes = 0;
+            previewFrame.src = 'about:blank';
+            updateStatus('等待开始', '#6c757d');
+            updateProgress();
+        }
+        
+        // 加载页面
+        function loadPage(url) {
+            try {
+                // 添加时间戳避免缓存
+                const timestamp = new Date().getTime();
+                const separator = url.includes('?') ? '&' : '?';
+                previewFrame.src = url + separator + 't=' + timestamp;
+            } catch (e) {
+                console.error('加载页面出错:', e);
+                updateStatus('加载页面出错', '#dc3545');
+            }
+            
+            updateProgress();
+        }
+        
+        // 更新状态
+        function updateStatus(text, color) {
+            statusText.textContent = text;
+            statusText.style.color = color;
+            statusIcon.style.background = color;
+        }
+        
+        // 更新进度
+        function updateProgress() {
+            const progress = totalRefreshes > 0 ? Math.round((refreshCount / totalRefreshes) * 100) : 0;
+            progressText.textContent = `${refreshCount}/${totalRefreshes}`;
+            progressBar.style.width = `${progress}%`;
+            counter.textContent = `${progress}%`;
+        }
+        
+        // 更新下次刷新时间
+        function updateNextRefresh(interval) {
+            const now = new Date();
+            const nextTime = new Date(now.getTime() + interval);
+            nextRefresh.textContent = nextTime.toLocaleTimeString();
+            
+            // 每秒更新一次时间显示
+            if (refreshInterval) {
+                setTimeout(() => {
+                    if (refreshInterval) updateNextRefresh(interval);
+                }, 1000);
+            }
+        }
+        
+        // 事件监听
+        startBtn.addEventListener('click', startRefresh);
+        pauseBtn.addEventListener('click', togglePause);
+        resetBtn.addEventListener('click', reset);
+        
+        // 初始化应用
+        init();
+    </script>
+</body>
+</html>

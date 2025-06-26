@@ -136,4 +136,10 @@ export const gradients = {
     angle: 20,
     colors: ['#606c88','#182424','#3f4c6b']
   },
+  'Alpha-white': {
+    name: '透明渐变',
+    type: 'linear',
+    angle: 270,
+    colors: ['rgba(255, 255, 255, 0.30)', 'rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0.1)']
+  },
 }; 
