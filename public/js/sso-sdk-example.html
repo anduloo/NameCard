@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSO SDK 使用示例</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+        
+        .section h2 {
+            color: #4a5568;
+            margin-top: 0;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+        
+        .status.success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+        
+        .status.error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #feb2b2;
+        }
+        
+        .status.info {
+            background: #bee3f8;
+            color: #2a4365;
+            border: 1px solid #90cdf4;
+        }
+        
+        .user-info {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .project-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .project-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .project-card.access-granted {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+        
+        .project-card.access-denied {
+            border-color: #f56565;
+            background: #fff5f5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 SSO SDK 使用示例</h1>
+        
+        <!-- 基本使用 -->
+        <div class="section">
+            <h2>1. 基本使用</h2>
+            <p>引入SDK并初始化：</p>
+            <div class="code-block">
+&lt;script src="/js/sso-sdk.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+    // 配置SDK
+    window.SSO_AUTO_INIT = true; // 自动初始化
+    
+    // 或者手动初始化
+    // sso.init();
+&lt;/script&gt;
+            </div>
+            
+            <div id="basic-status" class="status info">正在检查登录状态...</div>
+            <button class="btn" onclick="checkBasicStatus()">检查登录状态</button>
+            <button class="btn" onclick="getUserInfo()">获取用户信息</button>
+        </div>
+        
+        <!-- 用户信息显示 -->
+        <div class="section">
+            <h2>2. 用户信息</h2>
+            <div id="user-info-display" class="user-info">
+                <p>请先登录查看用户信息</p>
+            </div>
+            <button class="btn" onclick="refreshUserInfo()">刷新用户信息</button>
+        </div>
+        
+        <!-- 项目权限检查 -->
+        <div class="section">
+            <h2>3. 项目权限检查</h2>
+            <p>检查用户对特定项目的访问权限：</p>
+            <div class="code-block">
+// 检查项目访问权限
+const hasAccess = await sso.checkProjectAccess(projectId);
+            </div>
+            
+            <div id="project-access-status" class="status info">请选择项目检查权限</div>
+            <button class="btn" onclick="checkProject1()">检查项目1权限</button>
+            <button class="btn" onclick="checkProject2()">检查项目2权限</button>
+            <button class="btn" onclick="checkProject3()">检查项目3权限</button>
+        </div>
+        
+        <!-- 用户项目列表 -->
+        <div class="section">
+            <h2>4. 用户项目列表</h2>
+            <div id="user-projects" class="project-list">
+                <p>正在加载项目列表...</p>
+            </div>
+            <button class="btn" onclick="loadUserProjects()">刷新项目列表</button>
+        </div>
+        
+        <!-- 事件监听 -->
+        <div class="section">
+            <h2>5. 事件监听</h2>
+            <p>监听SSO相关事件：</p>
+            <div class="code-block">
+// 监听用户信息加载事件
+sso.on(SSO_EVENTS.USER_INFO_LOADED, (data) => {
+    console.log('用户信息已加载:', data.userInfo);
+});
+
+// 监听项目权限事件
+sso.on(SSO_EVENTS.PROJECT_ACCESS_GRANTED, (data) => {
+    console.log('项目访问权限已授予:', data.projectId);
+});
+            </div>
+            
+            <div id="event-log" class="status info">事件日志将在这里显示</div>
+            <button class="btn" onclick="clearEventLog()">清空日志</button>
+        </div>
+        
+        <!-- 高级功能 -->
+        <div class="section">
+            <h2>6. 高级功能</h2>
+            <button class="btn" onclick="customConfig()">自定义配置</button>
+            <button class="btn" onclick="manualLogout()">手动登出</button>
+            <button class="btn" onclick="redirectToPortal()">跳转门户</button>
+            <button class="btn" onclick="destroySDK()">销毁SDK</button>
+        </div>
+        
+        <!-- 配置示例 -->
+        <div class="section">
+            <h2>7. 配置示例</h2>
+            <div class="code-block">
+// 自定义配置
+const customSDK = new SSOSDK({
+    apiBase: 'https://your-api-domain.com/api',
+    loginUrl: 'https://your-domain.com/login',
+    portalUrl: 'https://your-domain.com/portal',
+    checkInterval: 60000, // 60秒检查一次
+    autoRedirect: false,  // 禁用自动跳转
+    debug: true          // 启用调试模式
+});
+
+await customSDK.init();
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入SSO SDK -->
+    <script src="/js/sso-sdk.js"></script>
+    <script>
+        // 启用自动初始化
+        window.SSO_AUTO_INIT = true;
+        
+        // 事件日志
+        let eventLog = [];
+        
+        // 监听所有SSO事件
+        Object.values(SSO_EVENTS).forEach(eventName => {
+            sso.on(eventName, (data) => {
+                const logEntry = `[${new Date().toLocaleTimeString()}] ${eventName}: ${JSON.stringify(data)}`;
+                eventLog.push(logEntry);
+                updateEventLog();
+                console.log(logEntry);
+            });
+        });
+        
+        // 基本状态检查
+        async function checkBasicStatus() {
+            const statusDiv = document.getElementById('basic-status');
+            try {
+                const isLoggedIn = await sso.checkLoginStatus();
+                if (isLoggedIn) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✅ 用户已登录';
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = '❌ 用户未登录';
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ 检查失败: ${error.message}`;
+            }
+        }
+        
+        // 获取用户信息
+        async function getUserInfo() {
+            const userInfo = sso.getUserInfo();
+            const displayDiv = document.getElementById('user-info-display');
+            
+            if (userInfo) {
+                displayDiv.innerHTML = `
+                    <h3>用户信息</h3>
+                    <p><strong>ID:</strong> ${userInfo.id}</p>
+                    <p><strong>邮箱:</strong> ${userInfo.email}</p>
+                    <p><strong>姓名:</strong> ${userInfo.name || '未设置'}</p>
+                    <p><strong>角色:</strong> ${userInfo.role}</p>
+                    <p><strong>状态:</strong> ${userInfo.isActive ? '活跃' : '禁用'}</p>
+                    <p><strong>创建时间:</strong> ${new Date(userInfo.createdAt).toLocaleString()}</p>
+                `;
+            } else {
+                displayDiv.innerHTML = '<p>❌ 无法获取用户信息，请先登录</p>';
+            }
+        }
+        
+        // 刷新用户信息
+        async function refreshUserInfo() {
+            try {
+                await sso.loadUserInfo();
+                getUserInfo();
+            } catch (error) {
+                document.getElementById('user-info-display').innerHTML = `<p>❌ 刷新失败: ${error.message}</p>`;
+            }
+        }
+        
+        // 检查项目权限
+        async function checkProjectAccess(projectId) {
+            const statusDiv = document.getElementById('project-access-status');
+            try {
+                const hasAccess = await sso.checkProjectAccess(projectId);
+                if (hasAccess) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = `✅ 项目 ${projectId} 访问权限已授予`;
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = `❌ 项目 ${projectId} 访问权限被拒绝`;
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ 检查失败: ${error.message}`;
+            }
+        }
+        
+        function checkProject1() { checkProjectAccess(1); }
+        function checkProject2() { checkProjectAccess(2); }
+        function checkProject3() { checkProjectAccess(3); }
+        
+        // 加载用户项目
+        async function loadUserProjects() {
+            const projectsDiv = document.getElementById('user-projects');
+            try {
+                const projects = await sso.getUserProjects();
+                if (projects.length > 0) {
+                    projectsDiv.innerHTML = projects.map(project => `
+                        <div class="project-card">
+                            <h4>${project.name}</h4>
+                            <p>${project.description || '无描述'}</p>
+                            <small>ID: ${project.id}</small>
+                        </div>
+                    `).join('');
+                } else {
+                    projectsDiv.innerHTML = '<p>暂无可访问的项目</p>';
+                }
+            } catch (error) {
+                projectsDiv.innerHTML = `<p>❌ 加载失败: ${error.message}</p>`;
+            }
+        }
+        
+        // 更新事件日志
+        function updateEventLog() {
+            const logDiv = document.getElementById('event-log');
+            logDiv.innerHTML = eventLog.slice(-5).join('<br>'); // 显示最近5条
+        }
+        
+        // 清空事件日志
+        function clearEventLog() {
+            eventLog = [];
+            updateEventLog();
+        }
+        
+        // 自定义配置
+        function customConfig() {
+            alert('请查看控制台了解自定义配置示例');
+            console.log('自定义配置示例:', {
+                apiBase: 'https://your-api-domain.com/api',
+                loginUrl: 'https://your-domain.com/login',
+                portalUrl: 'https://your-domain.com/portal',
+                checkInterval: 60000,
+                autoRedirect: false,
+                debug: true
+            });
+        }
+        
+        // 手动登出
+        async function manualLogout() {
+            if (confirm('确定要登出吗？')) {
+                await sso.logout();
+                alert('已登出');
+            }
+        }
+        
+        // 跳转门户
+        function redirectToPortal() {
+            sso.redirectToPortal();
+        }
+        
+        // 销毁SDK
+        function destroySDK() {
+            if (confirm('确定要销毁SDK吗？')) {
+                sso.destroy();
+                alert('SDK已销毁');
+            }
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 等待SDK初始化
+            setTimeout(async () => {
+                await checkBasicStatus();
+                getUserInfo();
+                loadUserProjects();
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 

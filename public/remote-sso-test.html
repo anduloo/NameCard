@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>远程SSO调用测试</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .config-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .config-section h3 {
+            color: #4a5568;
+            margin-top: 0;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+        
+        .status.success { background: #c6f6d5; color: #22543d; }
+        .status.error { background: #fed7d7; color: #742a2a; }
+        .status.info { background: #bee3f8; color: #2a4365; }
+        .status.warning { background: #fef5e7; color: #744210; }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn.secondary {
+            background: linear-gradient(135deg, #718096, #4a5568);
+        }
+        
+        .user-info {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .log {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+        
+        .test-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .test-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .test-card.success {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+        
+        .test-card.error {
+            border-color: #f56565;
+            background: #fff5f5;
+        }
+        
+        .test-card.pending {
+            border-color: #ed8936;
+            background: #fffaf0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 远程SSO调用测试</h1>
+        
+        <!-- 配置区域 -->
+        <div class="config-section">
+            <h3>SSO服务器配置</h3>
+            <div class="form-group">
+                <label for="sso-server">SSO服务器地址:</label>
+                <input type="text" id="sso-server" value="http://localhost:3001" placeholder="例如: https://your-sso-server.com">
+            </div>
+            <div class="form-group">
+                <label for="sso-api">API基础路径:</label>
+                <input type="text" id="sso-api" value="/api" placeholder="例如: /api">
+            </div>
+            <div class="form-group">
+                <label for="sso-login">登录页面路径:</label>
+                <input type="text" id="sso-login" value="/login" placeholder="例如: /login">
+            </div>
+            <div class="form-group">
+                <label for="sso-portal">门户页面路径:</label>
+                <input type="text" id="sso-portal" value="/portal" placeholder="例如: /portal">
+            </div>
+            <button class="btn" onclick="updateConfig()">更新配置</button>
+            <button class="btn secondary" onclick="resetConfig()">重置配置</button>
+        </div>
+        
+        <!-- 连接状态 -->
+        <div id="connection-status" class="status info">
+            请配置SSO服务器地址并点击"测试连接"
+        </div>
+        
+        <!-- 测试按钮 -->
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="btn" onclick="testConnection()">测试连接</button>
+            <button class="btn" onclick="initSDK()">初始化SDK</button>
+            <button class="btn" onclick="checkLogin()">检查登录状态</button>
+            <button class="btn" onclick="getUserInfo()">获取用户信息</button>
+            <button class="btn" onclick="testProjectAccess()">测试项目权限</button>
+            <button class="btn" onclick="logout()">登出</button>
+        </div>
+        
+        <!-- 用户信息显示 -->
+        <div id="user-info" class="user-info" style="display: none;">
+            <h3>用户信息</h3>
+            <div id="user-details"></div>
+        </div>
+        
+        <!-- 测试结果 -->
+        <div class="test-results" id="test-results">
+            <div class="test-card pending">
+                <h4>连接测试</h4>
+                <p>待测试</p>
+            </div>
+            <div class="test-card pending">
+                <h4>SDK初始化</h4>
+                <p>待测试</p>
+            </div>
+            <div class="test-card pending">
+                <h4>登录状态</h4>
+                <p>待测试</p>
+            </div>
+            <div class="test-card pending">
+                <h4>用户信息</h4>
+                <p>待测试</p>
+            </div>
+            <div class="test-card pending">
+                <h4>项目权限</h4>
+                <p>待测试</p>
+            </div>
+        </div>
+        
+        <!-- 事件日志 -->
+        <div class="config-section">
+            <h3>事件日志</h3>
+            <div id="event-log" class="log">
+                <div>事件日志将在这里显示...</div>
+            </div>
+            <button class="btn secondary" onclick="clearLog()">清空日志</button>
+        </div>
+    </div>
+
+    <!-- 动态加载SSO SDK -->
+    <script>
+        let sso = null;
+        let eventLog = [];
+        let ssoConfig = {
+            apiBase: 'http://localhost:3001/api',
+            loginUrl: 'http://localhost:3001/login',
+            portalUrl: 'http://localhost:3001/portal',
+            checkInterval: 30000,
+            autoRedirect: false, // 测试时不自动跳转
+            debug: true
+        };
+        
+        // 更新配置
+        function updateConfig() {
+            const server = document.getElementById('sso-server').value.trim();
+            const api = document.getElementById('sso-api').value.trim();
+            const login = document.getElementById('sso-login').value.trim();
+            const portal = document.getElementById('sso-portal').value.trim();
+            
+            ssoConfig = {
+                apiBase: server + api,
+                loginUrl: server + login,
+                portalUrl: server + portal,
+                checkInterval: 30000,
+                autoRedirect: false,
+                debug: true
+            };
+            
+            logEvent('配置已更新', ssoConfig);
+            updateStatus('配置已更新，请点击"测试连接"', 'info');
+        }
+        
+        // 重置配置
+        function resetConfig() {
+            document.getElementById('sso-server').value = 'http://localhost:3001';
+            document.getElementById('sso-api').value = '/api';
+            document.getElementById('sso-login').value = '/login';
+            document.getElementById('sso-portal').value = '/portal';
+            updateConfig();
+        }
+        
+        // 测试连接
+        async function testConnection() {
+            updateTestResult('连接测试', 'pending', '测试中...');
+            
+            try {
+                const server = document.getElementById('sso-server').value.trim();
+                const response = await fetch(server, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                if (response.ok) {
+                    updateTestResult('连接测试', 'success', '连接成功');
+                    logEvent('连接测试成功', { status: response.status });
+                } else {
+                    updateTestResult('连接测试', 'error', `连接失败: ${response.status}`);
+                    logEvent('连接测试失败', { status: response.status });
+                }
+            } catch (error) {
+                updateTestResult('连接测试', 'error', `连接错误: ${error.message}`);
+                logEvent('连接测试错误', { error: error.message });
+            }
+        }
+        
+        // 初始化SDK
+        async function initSDK() {
+            updateTestResult('SDK初始化', 'pending', '初始化中...');
+            
+            try {
+                // 动态加载SDK
+                await loadSSOSDK();
+                
+                // 创建SDK实例
+                sso = new SSOSDK(ssoConfig);
+                
+                // 监听事件
+                setupEventListeners();
+                
+                // 初始化
+                await sso.init();
+                
+                updateTestResult('SDK初始化', 'success', '初始化成功');
+                logEvent('SDK初始化成功');
+                updateStatus('SDK初始化成功', 'success');
+                
+            } catch (error) {
+                updateTestResult('SDK初始化', 'error', `初始化失败: ${error.message}`);
+                logEvent('SDK初始化失败', { error: error.message });
+                updateStatus(`SDK初始化失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 动态加载SSO SDK
+        async function loadSSOSDK() {
+            return new Promise((resolve, reject) => {
+                if (window.SSOSDK) {
+                    resolve();
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = ssoConfig.apiBase.replace('/api', '') + '/js/sso-sdk.js';
+                script.onload = resolve;
+                script.onerror = () => reject(new Error('无法加载SSO SDK'));
+                document.head.appendChild(script);
+            });
+        }
+        
+        // 设置事件监听
+        function setupEventListeners() {
+            if (!sso || !window.SSO_EVENTS) return;
+            
+            Object.values(window.SSO_EVENTS).forEach(eventName => {
+                sso.on(eventName, (data) => {
+                    logEvent(eventName, data);
+                });
+            });
+        }
+        
+        // 检查登录状态
+        async function checkLogin() {
+            if (!sso) {
+                updateStatus('请先初始化SDK', 'warning');
+                return;
+            }
+            
+            updateTestResult('登录状态', 'pending', '检查中...');
+            
+            try {
+                const isLoggedIn = await sso.checkLoginStatus();
+                if (isLoggedIn) {
+                    updateTestResult('登录状态', 'success', '已登录');
+                    logEvent('登录状态检查', { isLoggedIn: true });
+                } else {
+                    updateTestResult('登录状态', 'error', '未登录');
+                    logEvent('登录状态检查', { isLoggedIn: false });
+                }
+            } catch (error) {
+                updateTestResult('登录状态', 'error', `检查失败: ${error.message}`);
+                logEvent('登录状态检查失败', { error: error.message });
+            }
+        }
+        
+        // 获取用户信息
+        async function getUserInfo() {
+            if (!sso) {
+                updateStatus('请先初始化SDK', 'warning');
+                return;
+            }
+            
+            updateTestResult('用户信息', 'pending', '获取中...');
+            
+            try {
+                const userInfo = sso.getUserInfo();
+                if (userInfo) {
+                    updateTestResult('用户信息', 'success', '获取成功');
+                    displayUserInfo(userInfo);
+                    logEvent('用户信息获取成功', userInfo);
+                } else {
+                    updateTestResult('用户信息', 'error', '无用户信息');
+                    logEvent('用户信息获取失败', { error: '无用户信息' });
+                }
+            } catch (error) {
+                updateTestResult('用户信息', 'error', `获取失败: ${error.message}`);
+                logEvent('用户信息获取失败', { error: error.message });
+            }
+        }
+        
+        // 测试项目权限
+        async function testProjectAccess() {
+            if (!sso) {
+                updateStatus('请先初始化SDK', 'warning');
+                return;
+            }
+            
+            updateTestResult('项目权限', 'pending', '测试中...');
+            
+            try {
+                const hasAccess = await sso.checkProjectAccess(1);
+                if (hasAccess) {
+                    updateTestResult('项目权限', 'success', '有访问权限');
+                    logEvent('项目权限测试', { projectId: 1, hasAccess: true });
+                } else {
+                    updateTestResult('项目权限', 'error', '无访问权限');
+                    logEvent('项目权限测试', { projectId: 1, hasAccess: false });
+                }
+            } catch (error) {
+                updateTestResult('项目权限', 'error', `测试失败: ${error.message}`);
+                logEvent('项目权限测试失败', { error: error.message });
+            }
+        }
+        
+        // 登出
+        async function logout() {
+            if (!sso) {
+                updateStatus('请先初始化SDK', 'warning');
+                return;
+            }
+            
+            try {
+                await sso.logout();
+                updateStatus('已登出', 'success');
+                logEvent('用户已登出');
+                hideUserInfo();
+            } catch (error) {
+                updateStatus(`登出失败: ${error.message}`, 'error');
+                logEvent('登出失败', { error: error.message });
+            }
+        }
+        
+        // 显示用户信息
+        function displayUserInfo(userInfo) {
+            const userInfoDiv = document.getElementById('user-info');
+            const detailsDiv = document.getElementById('user-details');
+            
+            userInfoDiv.style.display = 'block';
+            detailsDiv.innerHTML = `
+                <p><strong>ID:</strong> ${userInfo.id}</p>
+                <p><strong>邮箱:</strong> ${userInfo.email}</p>
+                <p><strong>姓名:</strong> ${userInfo.name || '未设置'}</p>
+                <p><strong>角色:</strong> ${userInfo.role}</p>
+                <p><strong>状态:</strong> ${userInfo.isActive ? '活跃' : '禁用'}</p>
+                <p><strong>创建时间:</strong> ${new Date(userInfo.createdAt).toLocaleString()}</p>
+            `;
+        }
+        
+        // 隐藏用户信息
+        function hideUserInfo() {
+            document.getElementById('user-info').style.display = 'none';
+        }
+        
+        // 更新状态
+        function updateStatus(message, type) {
+            const statusDiv = document.getElementById('connection-status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+        }
+        
+        // 更新测试结果
+        function updateTestResult(testName, status, message) {
+            const results = document.getElementById('test-results');
+            const cards = results.querySelectorAll('.test-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('h4').textContent;
+                if (title === testName) {
+                    card.className = `test-card ${status}`;
+                    card.querySelector('p').textContent = message;
+                }
+            });
+        }
+        
+        // 记录事件
+        function logEvent(eventName, data = {}) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${eventName}: ${JSON.stringify(data)}`;
+            eventLog.push(logEntry);
+            updateLog();
+            console.log(logEntry);
+        }
+        
+        // 更新日志显示
+        function updateLog() {
+            const logDiv = document.getElementById('event-log');
+            logDiv.innerHTML = eventLog.slice(-20).join('<br>'); // 显示最近20条
+        }
+        
+        // 清空日志
+        function clearLog() {
+            eventLog = [];
+            updateLog();
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            logEvent('页面加载完成');
+            updateConfig(); // 初始化配置
+        });
+    </script>
+</body>
+</html> 

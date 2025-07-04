@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>远程SSO集成示例</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+        
+        .status.success { background: #c6f6d5; color: #22543d; }
+        .status.error { background: #fed7d7; color: #742a2a; }
+        .status.info { background: #bee3f8; color: #2a4365; }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .user-info {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 远程SSO集成示例</h1>
+        
+        <div id="status" class="status info">
+            正在连接SSO服务器...
+        </div>
+        
+        <div id="user-info" class="user-info" style="display: none;">
+            <h3>用户信息</h3>
+            <div id="user-details"></div>
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="btn" onclick="checkLogin()">检查登录状态</button>
+            <button class="btn" onclick="getUserInfo()">获取用户信息</button>
+            <button class="btn" onclick="checkProjectAccess(1)">检查项目权限</button>
+            <button class="btn" onclick="logout()">登出</button>
+        </div>
+        
+        <h3>集成代码示例</h3>
+        <div class="code-block">
+&lt;!-- 1. 引入SSO SDK --&gt;
+&lt;script src="https://your-sso-server.com/js/sso-sdk.js"&gt;&lt;/script&gt;
+
+&lt;script&gt;
+// 2. 配置SSO SDK
+const sso = new SSOSDK({
+    apiBase: 'https://your-sso-server.com/api',
+    loginUrl: 'https://your-sso-server.com/login',
+    portalUrl: 'https://your-sso-server.com/portal',
+    checkInterval: 30000,
+    autoRedirect: true,
+    debug: false
+});
+
+// 3. 初始化SDK
+sso.init().then(() => {
+    console.log('SSO SDK初始化成功');
+});
+
+// 4. 监听事件
+sso.on(SSO_EVENTS.USER_INFO_LOADED, (data) => {
+    console.log('用户信息已加载:', data.userInfo);
+});
+
+// 5. 检查登录状态
+async function checkLogin() {
+    const isLoggedIn = await sso.checkLoginStatus();
+    if (isLoggedIn) {
+        console.log('用户已登录');
+    } else {
+        console.log('用户未登录');
+    }
+}
+
+// 6. 获取用户信息
+function getUserInfo() {
+    const userInfo = sso.getUserInfo();
+    console.log('用户信息:', userInfo);
+}
+
+// 7. 检查项目权限
+async function checkProjectAccess(projectId) {
+    const hasAccess = await sso.checkProjectAccess(projectId);
+    if (hasAccess) {
+        console.log('有访问权限');
+    } else {
+        console.log('无访问权限');
+    }
+}
+
+// 8. 登出
+async function logout() {
+    await sso.logout();
+}
+&lt;/script&gt;
+        </div>
+    </div>
+
+    <!-- 引入远程SSO SDK -->
+    <script src="/js/sso-sdk.js"></script>
+    <script>
+        // 配置远程SSO SDK
+        const ssoConfig = {
+            apiBase: '/api',              // 相对路径，适用于同域或代理
+            loginUrl: '/login',           // 相对路径
+            portalUrl: '/portal',         // 相对路径
+            checkInterval: 30000,
+            autoRedirect: true,
+            debug: true
+        };
+        
+        // 创建SDK实例
+        const sso = new SSOSDK(ssoConfig);
+        
+        // 初始化
+        sso.init().then(() => {
+            console.log('远程SSO SDK初始化成功');
+            checkLogin();
+        }).catch(error => {
+            console.error('远程SSO SDK初始化失败:', error);
+            document.getElementById('status').className = 'status error';
+            document.getElementById('status').textContent = `初始化失败: ${error.message}`;
+        });
+        
+        // 检查登录状态
+        async function checkLogin() {
+            const statusDiv = document.getElementById('status');
+            try {
+                const isLoggedIn = await sso.checkLoginStatus();
+                if (isLoggedIn) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✅ 已连接到SSO服务器并登录';
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = '❌ 未登录，将跳转到SSO登录页';
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ 连接失败: ${error.message}`;
+            }
+        }
+        
+        // 获取用户信息
+        function getUserInfo() {
+            const userInfo = sso.getUserInfo();
+            const userInfoDiv = document.getElementById('user-info');
+            const detailsDiv = document.getElementById('user-details');
+            
+            if (userInfo) {
+                userInfoDiv.style.display = 'block';
+                detailsDiv.innerHTML = `
+                    <p><strong>ID:</strong> ${userInfo.id}</p>
+                    <p><strong>邮箱:</strong> ${userInfo.email}</p>
+                    <p><strong>姓名:</strong> ${userInfo.name || '未设置'}</p>
+                    <p><strong>角色:</strong> ${userInfo.role}</p>
+                    <p><strong>状态:</strong> ${userInfo.isActive ? '活跃' : '禁用'}</p>
+                    <p><strong>创建时间:</strong> ${new Date(userInfo.createdAt).toLocaleString()}</p>
+                `;
+            } else {
+                alert('无法获取用户信息，请先登录');
+            }
+        }
+        
+        // 检查项目权限
+        async function checkProjectAccess(projectId) {
+            try {
+                const hasAccess = await sso.checkProjectAccess(projectId);
+                if (hasAccess) {
+                    alert(`✅ 项目 ${projectId} 访问权限已授予`);
+                } else {
+                    alert(`❌ 项目 ${projectId} 访问权限被拒绝`);
+                }
+            } catch (error) {
+                alert(`❌ 检查失败: ${error.message}`);
+            }
+        }
+        
+        // 登出
+        async function logout() {
+            if (confirm('确定要登出吗？')) {
+                await sso.logout();
+                alert('已登出');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html> 

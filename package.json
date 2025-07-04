@@ -1,28 +1,25 @@
 {
-    "name": "namecard-refactored",
-    "private": true,
-    "version": "0.0.0",
-    "type": "module",
-    "scripts": {
-        "dev": "vite",
-        "build": "vite build",
-        "preview": "vite preview",
-        "templates:list": "node scripts/manage-templates.js list",
-        "templates:validate": "node scripts/manage-templates.js validate",
-        "templates:create": "node scripts/manage-templates.js create",
-        "templates:update-list": "node scripts/update-template-list.js update"
-    },
-    "dependencies": {
-        "@simonwep/pickr": "^1.9.1",
-        "dom-to-image-more": "^2.16.0",
-        "fs-extra": "^11.3.0",
-        "html2canvas": "^1.4.1",
-        "pinia": "^2.1.6",
-        "vue": "^3.3.4",
-        "xlsx": "^0.18.5"
-    },
-    "devDependencies": {
-        "@vitejs/plugin-vue": "^4.2.3",
-        "vite": "^4.4.5"
-    }
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.10.0",
+    "dayjs": "^1.11.13",
+    "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.1",
+    "node-fetch": "^2.7.0",
+    "nodemailer": "^7.0.4",
+    "vue": "^3.3.0",
+    "pinia": "^2.1.0",
+    "xlsx": "^0.18.5",
+    "@simonwep/pickr": "^1.8.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.4.0",
+    "vite": "^4.4.9"
+  }
 }

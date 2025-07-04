@@ -18,6 +18,12 @@ export const useStyleStore = defineStore('style', () => {
       },
       textAlign: 'center',
       borderRadius: 0, // Added from generator.js analysis
+      spacing: {
+        rowGap: 10, // 行间距
+        columnGap: 10, // 列间距
+        padding: 20, // 内边距
+        margin: 0 // 外边距
+      }
     },
     number: {
       backgroundType: 'color',
@@ -137,7 +143,36 @@ export const useStyleStore = defineStore('style', () => {
 
   // 1. 从localStorage加载初始状态，或使用默认值
   const storedConfig = localStorage.getItem('namecard-style-config')
-  const initialConfig = storedConfig ? JSON.parse(storedConfig) : defaultConfig
+  let initialConfig = storedConfig ? JSON.parse(storedConfig) : defaultConfig
+
+  // 迁移函数：确保配置包含所有必要的属性
+  function migrateConfig(config) {
+    const migrated = { ...defaultConfig, ...config }
+    
+    // 确保 global 配置包含所有必要的属性
+    if (migrated.global) {
+      migrated.global = { ...defaultConfig.global, ...migrated.global }
+      
+      // 确保 spacing 属性存在
+      if (!migrated.global.spacing) {
+        migrated.global.spacing = { ...defaultConfig.global.spacing }
+      } else {
+        // 确保 spacing 的所有属性都存在
+        migrated.global.spacing = { ...defaultConfig.global.spacing, ...migrated.global.spacing }
+      }
+      
+      // 确保 border 属性存在
+      if (!migrated.global.border) {
+        migrated.global.border = { ...defaultConfig.global.border }
+      } else {
+        migrated.global.border = { ...defaultConfig.global.border, ...migrated.global.border }
+      }
+    }
+    
+    return migrated
+  }
+
+  initialConfig = migrateConfig(initialConfig)
 
   const config = ref(initialConfig)
 

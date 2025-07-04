@@ -87,6 +87,55 @@
           </select>
         </div>
       </div>
+      
+      <!-- 间距设置 -->
+      <div :class="styles.toolbarSection">
+        <h5 :class="styles.groupTitle">间距设置</h5>
+        <div :class="styles.controlItem">
+          <label>行间距</label>
+          <input 
+            type="number" 
+            v-model.number="store.config.global.spacing.rowGap" 
+            min="0" 
+            max="100" 
+            style="width:60px;" 
+            title="调整行与行之间的间距"
+          />
+        </div>
+        <div :class="styles.controlItem">
+          <label>列间距</label>
+          <input 
+            type="number" 
+            v-model.number="store.config.global.spacing.columnGap" 
+            min="0" 
+            max="100" 
+            style="width:60px;" 
+            title="调整列与列之间的间距"
+          />
+        </div>
+        <div :class="styles.controlItem">
+          <label>内边距</label>
+          <input 
+            type="number" 
+            v-model.number="store.config.global.spacing.padding" 
+            min="0" 
+            max="100" 
+            style="width:60px;" 
+            title="调整卡片内部边距"
+          />
+        </div>
+        <div :class="styles.controlItem">
+          <label>外边距</label>
+          <input 
+            type="number" 
+            v-model.number="store.config.global.spacing.margin" 
+            min="0" 
+            max="100" 
+            style="width:60px;" 
+            title="调整卡片外部边距"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>

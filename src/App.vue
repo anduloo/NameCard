@@ -22,7 +22,6 @@
 import DataImporter from './components/DataImporter.vue'
 import ConfigPanel from './components/ConfigPanel.vue'
 import NameCardList from './components/NameCardList.vue'
-import { useStyleStore } from '@/stores/styleStore'
 </script>
 
 <style src="../web/iconfonts/iconfont.css"></style>

@@ -317,13 +317,13 @@
             color: #fff;
         }
         
-        .btn-reset {
-            background: #ffc107;
-            color: #212529;
+        .btn-stop {
+            background: #dc3545;
+            color: white;
         }
         
-        .btn-reset:hover {
-            background: #e0a800;
+        .btn-stop:hover {
+            background: #c82333;
             transform: translateY(-2px);
         }
         
@@ -496,7 +496,6 @@
                 <div class="btn-group">
                     <button id="startBtn" class="btn-start"><i class="fas fa-play"></i> 开始刷新</button>
                     <button id="pauseBtn" class="btn-pause"><i class="fas fa-pause"></i> 暂停</button>
-                    <button id="resetBtn" class="btn-reset"><i class="fas fa-undo"></i> 重置</button>
                 </div>
                 
                 <div class="instructions">
@@ -563,7 +562,6 @@
         const timesInput = document.getElementById('times');
         const startBtn = document.getElementById('startBtn');
         const pauseBtn = document.getElementById('pauseBtn');
-        const resetBtn = document.getElementById('resetBtn');
         const previewFrame = document.getElementById('previewFrame');
         const statusText = document.getElementById('statusText');
         const progressText = document.getElementById('progressText');
@@ -576,8 +574,9 @@
         let refreshInterval = null;
         let refreshCount = 0;
         let totalRefreshes = 0;
-        let nextRefreshTime = null;
         let isPaused = false;
+        let isRunning = false;
+        let nextRefreshTimeout = null;
         
         // 初始化
         function init() {
@@ -597,51 +596,64 @@
                 return;
             }
             
-            if (isNaN(interval)) {
-                alert('请输入有效的刷新间隔');
+            if (isNaN(interval) || interval < 1000) {
+                alert('请输入有效的刷新间隔（至少1秒）');
                 return;
             }
             
-            if (isNaN(totalRefreshes)) {
-                alert('请输入有效的刷新次数');
+            if (isNaN(totalRefreshes) || totalRefreshes < 1) {
+                alert('请输入有效的刷新次数（至少1次）');
                 return;
             }
             
-            // 重置计数器
+            // 如果已经在运行，先停止
+            if (isRunning) {
+                stopRefresh();
+            }
+            
+            // 重置状态
             refreshCount = 0;
             isPaused = false;
+            isRunning = true;
+            
+            // 更新UI
             pauseBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停';
             pauseBtn.disabled = false;
+            startBtn.innerHTML = '<i class="fas fa-stop"></i> 停止刷新';
+            startBtn.className = 'btn-stop';
+            
+            // 禁用输入
+            urlInput.disabled = true;
+            intervalInput.disabled = true;
+            timesInput.disabled = true;
             
             // 加载初始页面
             loadPage(url);
             
             // 设置刷新定时器
             refreshInterval = setInterval(() => {
-                if (isPaused) return;
+                if (!isRunning || isPaused) return;
+                
                 refreshCount++;
-                updateProgress(); // 先更新进度
+                updateProgress();
+                
                 if (refreshCount >= totalRefreshes) {
-                    stopRefresh();
-                    updateStatus('刷新完成', '#28a745');
+                    completeRefresh();
                     return;
                 }
+                
                 loadPage(url);
             }, interval);
             
             // 更新状态
             updateStatus('刷新中...', '#2575fc');
             updateNextRefresh(interval);
-            
-            // 禁用输入
-            urlInput.disabled = true;
-            intervalInput.disabled = true;
-            timesInput.disabled = true;
         }
         
         // 暂停/恢复刷新
         function togglePause() {
-            if (!refreshInterval) return;
+            if (!isRunning) return;
+            
             isPaused = !isPaused;
             if (isPaused) {
                 updateStatus('已暂停', '#ffc107');
@@ -652,15 +664,27 @@
             }
         }
         
-        // 停止刷新（重置暂停状态）
+        // 停止刷新
         function stopRefresh() {
             if (refreshInterval) {
                 clearInterval(refreshInterval);
                 refreshInterval = null;
             }
+            
+            if (nextRefreshTimeout) {
+                clearTimeout(nextRefreshTimeout);
+                nextRefreshTimeout = null;
+            }
+            
+            isRunning = false;
             isPaused = false;
+            
+            // 更新UI
             pauseBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停';
             pauseBtn.disabled = true;
+            startBtn.innerHTML = '<i class="fas fa-play"></i> 开始刷新';
+            startBtn.className = 'btn-start';
+            
             updateStatus('已停止', '#dc3545');
             nextRefresh.textContent = '--';
             
@@ -670,14 +694,34 @@
             timesInput.disabled = false;
         }
         
-        // 重置
-        function reset() {
-            stopRefresh();
-            refreshCount = 0;
-            totalRefreshes = 0;
-            previewFrame.src = 'about:blank';
-            updateStatus('等待开始', '#6c757d');
-            updateProgress();
+        // 完成刷新
+        function completeRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+            }
+            
+            if (nextRefreshTimeout) {
+                clearTimeout(nextRefreshTimeout);
+                nextRefreshTimeout = null;
+            }
+            
+            isRunning = false;
+            isPaused = false;
+            
+            // 更新UI
+            pauseBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停';
+            pauseBtn.disabled = true;
+            startBtn.innerHTML = '<i class="fas fa-play"></i> 开始刷新';
+            startBtn.className = 'btn-start';
+            
+            updateStatus('刷新完成', '#28a745');
+            nextRefresh.textContent = '--';
+            
+            // 启用输入
+            urlInput.disabled = false;
+            intervalInput.disabled = false;
+            timesInput.disabled = false;
         }
         
         // 加载页面
@@ -717,17 +761,22 @@
             nextRefresh.textContent = nextTime.toLocaleTimeString();
             
             // 每秒更新一次时间显示
-            if (refreshInterval) {
-                setTimeout(() => {
-                    if (refreshInterval) updateNextRefresh(interval);
+            if (isRunning && refreshInterval) {
+                nextRefreshTimeout = setTimeout(() => {
+                    if (isRunning && refreshInterval) updateNextRefresh(interval);
                 }, 1000);
             }
         }
         
         // 事件监听
-        startBtn.addEventListener('click', startRefresh);
+        startBtn.addEventListener('click', function() {
+            if (isRunning) {
+                stopRefresh();
+            } else {
+                startRefresh();
+            }
+        });
         pauseBtn.addEventListener('click', togglePause);
-        resetBtn.addEventListener('click', reset);
         
         // 初始化应用
         init();

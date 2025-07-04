@@ -146,28 +146,32 @@ const globalConfig = computed(() => store.config.global || {})
 const colCount = computed(() => props.columns.length)
 
 // --- Layout Constants ---
-const PADDING = 0 
-const ROW_GAP = 0
+const PADDING = computed(() => globalConfig.value?.spacing?.padding || 0)
+const ROW_GAP = computed(() => globalConfig.value?.spacing?.rowGap || 0)
+const COLUMN_GAP = computed(() => globalConfig.value?.spacing?.columnGap || 0)
+const MARGIN = computed(() => globalConfig.value?.spacing?.margin || 0)
 const TEXT_PADDING_BOTTOM = 8
 
 // --- Dynamic Dimensions ---
 const width = computed(() => {
   if (direction.value === 'vertical') {
     if (verticalColumnLayouts.value.length === 0) return 360;
-    return verticalColumnLayouts.value.reduce((sum, layout) => sum + layout.colWidth, 0);
+    const totalColumnWidth = verticalColumnLayouts.value.reduce((sum, layout) => sum + layout.colWidth, 0);
+    const totalGapWidth = (verticalColumnLayouts.value.length - 1) * COLUMN_GAP.value;
+    return totalColumnWidth + totalGapWidth + (MARGIN.value * 2);
   }
-  return 360
+  return 360 + (MARGIN.value * 2)
 })
 
 const height = computed(() => {
-  if (direction.value === 'vertical') return 360
-  if (!layouts.value || layouts.value.length === 0) return 100 // Fallback height
+  if (direction.value === 'vertical') return 360 + (MARGIN.value * 2)
+  if (!layouts.value || layouts.value.length === 0) return 100 + (MARGIN.value * 2) // Fallback height
 
   const lastLayout = layouts.value[layouts.value.length - 1]
-  if (!lastLayout || !lastLayout.rect) return 100;
+  if (!lastLayout || !lastLayout.rect) return 100 + (MARGIN.value * 2);
 
-  const h = (lastLayout.rect.y || 0) + (lastLayout.rect.height || 0) + PADDING
-  return h > 0 ? h : 100; // Final safeguard
+  const h = (lastLayout.rect.y || 0) + (lastLayout.rect.height || 0) + PADDING.value + (MARGIN.value * 2)
+  return h > 0 ? h : 100 + (MARGIN.value * 2); // Final safeguard
 })
 
 const viewBox = computed(() => `0 0 ${width.value} ${height.value}`)
@@ -204,10 +208,10 @@ const verticalColumnLayouts = computed(() => {
 // --- UNIFIED LAYOUT CALCULATION ---
 const layouts = computed(() => {
   const resultLayouts = []
-  let currentY = PADDING
+  let currentY = PADDING.value + MARGIN.value
 
   if (direction.value === 'horizontal') {
-    sortedColumns.value.forEach(col => {
+    sortedColumns.value.forEach((col, index) => {
       const config = store.config[col] || {}
       const borderConfig = config.border || {}
       
@@ -247,17 +251,18 @@ const layouts = computed(() => {
         textY = currentY + (rowHeight / 2) + (config.offsetY || 0)
       }
 
-      const rectWidth = width.value * ((config.length || 100) / 100)
+      // 计算背景矩形的宽度，覆盖整个可用宽度以避免间距空隙
+      const rectWidth = width.value - (MARGIN.value * 2)
       
       let textAnchor = 'middle'
       let textX = width.value / 2 + (config.offsetX || 0)
       const textAlign = config.textAlign || (globalConfig.value ? globalConfig.value.textAlign : 'center')
       if (textAlign === 'left') {
         textAnchor = 'start'
-        textX = 10 + (config.offsetX || 0)
+        textX = MARGIN.value + 10 + (config.offsetX || 0)
       } else if (textAlign === 'right') {
         textAnchor = 'end'
-        textX = width.value - 10 + (config.offsetX || 0)
+        textX = width.value - MARGIN.value - 10 + (config.offsetX || 0)
       }
       
       const rectCenterX = (width.value - rectWidth) / 2 + rectWidth / 2;
@@ -270,7 +275,7 @@ const layouts = computed(() => {
         groupTransform: '',
         skewTransform: config.skewAngle ? `translate(${rectCenterX}, ${rectCenterY}) skewX(${config.skewAngle}) translate(${-rectCenterX}, ${-rectCenterY})` : '',
         rect: {
-          x: (width.value - rectWidth) / 2,
+          x: MARGIN.value,
           y: currentY,
           width: rectWidth,
           height: rowHeight,
@@ -299,11 +304,11 @@ const layouts = computed(() => {
       }
       
       resultLayouts.push(layout)
-      currentY += rowHeight + ROW_GAP
+      currentY += rowHeight + ROW_GAP.value
     })
   } else { // vertical
-    let currentX = 0;
-    verticalColumnLayouts.value.forEach(vCol => {
+    let currentX = MARGIN.value;
+    verticalColumnLayouts.value.forEach((vCol, index) => {
       const { col, colWidth, lineHeight } = vCol;
       const config = store.config[col] || {}
       const borderConfig = config.border || {}
@@ -312,15 +317,19 @@ const layouts = computed(() => {
       const colCenterY = height.value / 2
       const rectHeight = height.value * ((config.length || 100) / 100)
       
+      // 计算背景矩形的宽度，包括列间距
+      const isLastCol = index === verticalColumnLayouts.value.length - 1
+      const rectWidth = colWidth + (isLastCol ? 0 : COLUMN_GAP.value)
+      
       const layout = {
         col,
         groupTransform: `translate(${currentX}, 0)`,
         skewTransform: config.skewAngle ? `translate(${colCenterX}, ${colCenterY}) skewY(${config.skewAngle}) translate(${-colCenterX}, ${-colCenterY})` : '',
         rect: {
           x: 0, 
-          y: (height.value - rectHeight) / 2,
-          width: colWidth,
-          height: rectHeight,
+          y: MARGIN.value,
+          width: rectWidth,
+          height: height.value - (MARGIN.value * 2),
           rx: config.borderRadius,
           fill: config.bgColor || 'transparent',
         },
@@ -334,7 +343,8 @@ const layouts = computed(() => {
         border: { ...borderConfig },
       }
       resultLayouts.push(layout)
-      currentX += colWidth
+      // 添加列间距，但不在最后一列后添加
+      currentX += colWidth + (index < verticalColumnLayouts.value.length - 1 ? COLUMN_GAP.value : 0)
     })
   }
 
@@ -377,11 +387,11 @@ const layouts = computed(() => {
         const textAlign = config.textAlign || (globalConfig.value ? globalConfig.value.textAlign : 'center');
         if (textAlign === 'left') {
             const rectWidth = width.value * ((config.length || 100) / 100);
-            layout.text.x = (width.value - rectWidth) / 2 + 10 + (config.offsetX || 0);
+            layout.text.x = (width.value - rectWidth) / 2 + MARGIN.value + 10 + (config.offsetX || 0);
             textAnchor = 'start';
         } else if (textAlign === 'right') {
             const rectWidth = width.value * ((config.length || 100) / 100);
-            layout.text.x = width.value - ((width.value - rectWidth) / 2) - 10 + (config.offsetX || 0);
+            layout.text.x = width.value - ((width.value - rectWidth) / 2) - MARGIN.value - 10 + (config.offsetX || 0);
             textAnchor = 'end';
         }
     }
