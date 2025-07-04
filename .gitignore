@@ -45,4 +45,8 @@ coverage/
 
 # Temporary folders
 tmp/
-temp/ 
+temp/
+
+# Exclude server and image-editor directories
+server/
+image-editor/ 
